@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blues Burger — Street View 3D</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900&family=Oswald:wght@200;300;400;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#020204;color:#f2ece0;font-family:'Oswald',sans-serif;overflow:hidden}
+#C{width:100vw;height:100vh;display:block}
+.top{position:fixed;top:18px;left:0;right:0;text-align:center;z-index:10;pointer-events:none}
+.brand{font-family:'Playfair Display',serif;font-weight:900;font-size:.8rem;letter-spacing:8px;text-transform:uppercase;color:#f0c040;text-shadow:0 0 15px rgba(240,192,64,.5)}
+.sub{font-weight:200;font-size:.38rem;letter-spacing:6px;text-transform:uppercase;color:#ff1a1a;opacity:.3;margin-top:2px}
+.cams{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:20}
+.cb{padding:10px 20px;font-family:'Oswald',sans-serif;font-weight:300;font-size:.5rem;letter-spacing:3px;text-transform:uppercase;border:1px solid rgba(255,26,26,.08);background:rgba(2,2,4,.94);color:#f2ece0;cursor:pointer;transition:all .3s;opacity:.35;backdrop-filter:blur(6px)}
+.cb:hover,.cb.on{border-color:#ff1a1a;color:#ff1a1a;opacity:1;box-shadow:0 0 20px rgba(255,26,26,.12)}
+.lbl{position:fixed;top:50%;right:28px;transform:translateY(-50%);text-align:right;z-index:10;pointer-events:none;transition:opacity .4s}
+.lbl h2{font-family:'Playfair Display',serif;font-weight:900;font-size:2rem;color:#ff1a1a;text-shadow:0 0 12px rgba(255,26,26,.25);line-height:1.1}
+.lbl p{font-weight:200;font-size:.45rem;letter-spacing:3px;text-transform:uppercase;color:#f0c040;opacity:.25;margin-top:5px;line-height:1.7}
+.hint{position:fixed;bottom:62px;left:50%;transform:translateX(-50%);font-weight:200;font-size:.38rem;letter-spacing:5px;text-transform:uppercase;opacity:.1;z-index:10;pointer-events:none}
+@media(max-width:768px){.lbl{right:10px;top:auto;bottom:110px;transform:none;text-align:center;left:10px}.lbl h2{font-size:1.3rem}.cams{flex-wrap:wrap;justify-content:center;width:96%}.cb{padding:7px 12px;font-size:.42rem}}
+</style>
+</head>
+<body>
+<canvas id="C"></canvas>
+<div class="top"><div class="brand">Blues Burger</div><div class="sub">Street View · Old North TLV · 3D</div></div>
+<div class="lbl" id="LBL"><h2 id="LN">The Block</h2><p id="LD">Blues Burger stands out<br>on a regular Old North street</p></div>
+<div class="cams">
+<button class="cb on" data-i="0">Street View</button>
+<button class="cb" data-i="1">The Sign</button>
+<button class="cb" data-i="2">Entrance</button>
+<button class="cb" data-i="3">Across Street</button>
+<button class="cb" data-i="4">Night Walk</button>
+</div>
+<div class="hint">Drag to orbit · Scroll to zoom</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+var W=innerWidth,H=innerHeight;
+var canvas=document.getElementById('C');
+var scene=new THREE.Scene();
+scene.fog=new THREE.FogExp2(0x020208,0.012);
+scene.background=new THREE.Color(0x020208);
+var cam=new THREE.PerspectiveCamera(50,W/H,0.1,300);
+var ren=new THREE.WebGLRenderer({canvas:canvas,antialias:true,powerPreference:'high-performance'});
+ren.setSize(W,H);ren.setPixelRatio(Math.min(devicePixelRatio,2));
+ren.toneMapping=THREE.ACESFilmicToneMapping;ren.toneMappingExposure=1.1;
+ren.shadowMap.enabled=true;ren.shadowMap.type=THREE.PCFSoftShadowMap;
+ren.physicallyCorrectLights=true;ren.outputEncoding=THREE.sRGBEncoding;
+
+/* ===== PROCEDURAL TEXTURES ===== */
+function mkBrickTex(w,h,baseR,baseG,baseB){
+  var c=document.createElement('canvas');c.width=w;c.height=h;var x=c.getContext('2d');
+  x.fillStyle='rgb('+baseR+','+baseG+','+baseB+')';x.fillRect(0,0,w,h);
+  var bw=28,bh=13,gap=2;
+  for(var row=0;row<h/bh;row++){var off=(row%2)*bw/2;
+    for(var col=-1;col<w/bw+1;col++){var r=Math.random();
+      x.fillStyle='rgb('+(baseR+r*25)+','+(baseG+r*15)+','+(baseB+r*12)+')';
+      x.fillRect(off+col*bw+gap/2,row*bh+gap/2,bw-gap,bh-gap);
+  }}
+  var t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;return t;
+}
+
+function mkConcreteTex(w,h){
+  var c=document.createElement('canvas');c.width=w;c.height=h;var x=c.getContext('2d');
+  x.fillStyle='#3a3a3a';x.fillRect(0,0,w,h);
+  for(var i=0;i<200;i++){x.fillStyle='rgba('+(30+Math.random()*40)+','+(30+Math.random()*40)+','+(30+Math.random()*40)+',0.3)';
+    x.fillRect(Math.random()*w,Math.random()*h,1+Math.random()*3,1+Math.random()*3);}
+  // Sidewalk lines
+  x.strokeStyle='rgba(0,0,0,0.15)';x.lineWidth=1;
+  for(var sy=0;sy<h;sy+=64){x.beginPath();x.moveTo(0,sy);x.lineTo(w,sy);x.stroke();}
+  for(var sx2=0;sx2<w;sx2+=64){x.beginPath();x.moveTo(sx2,0);x.lineTo(sx2,h);x.stroke();}
+  var t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;return t;
+}
+
+function mkRoadTex(w,h){
+  var c=document.createElement('canvas');c.width=w;c.height=h;var x=c.getContext('2d');
+  x.fillStyle='#1a1a1a';x.fillRect(0,0,w,h);
+  for(var i=0;i<500;i++){x.fillStyle='rgba('+(15+Math.random()*20)+','+(15+Math.random()*20)+','+(15+Math.random()*20)+',0.4)';
+    x.fillRect(Math.random()*w,Math.random()*h,1+Math.random()*4,1+Math.random()*2);}
+  var t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;return t;
+}
+
+var brickTex1=mkBrickTex(512,256,42,24,16);brickTex1.repeat.set(4,3);
+var brickTex2=mkBrickTex(512,256,55,45,35);brickTex2.repeat.set(3,3); // ugly beige
+var brickTex3=mkBrickTex(512,256,40,40,45);brickTex3.repeat.set(3,3); // gray
+var concTex=mkConcreteTex(512,512);concTex.repeat.set(6,2);
+var roadTex=mkRoadTex(512,256);roadTex.repeat.set(8,3);
+
+/* ===== MATERIALS ===== */
+var M={
+  // Blues Burger
+  bbBrick:new THREE.MeshStandardMaterial({map:brickTex1,roughness:0.82,bumpMap:brickTex1,bumpScale:0.25}),
+  // Ugly neighbors
+  uglyBeige:new THREE.MeshStandardMaterial({map:brickTex2,roughness:0.9}),
+  uglyGray:new THREE.MeshStandardMaterial({map:brickTex3,roughness:0.88}),
+  uglyPlaster:new THREE.MeshStandardMaterial({color:0x8a8070,roughness:0.95}),
+  uglyPlaster2:new THREE.MeshStandardMaterial({color:0x706860,roughness:0.92}),
+  // Street
+  sidewalk:new THREE.MeshStandardMaterial({map:concTex,roughness:0.75}),
+  road:new THREE.MeshStandardMaterial({map:roadTex,roughness:0.85}),
+  curb:new THREE.MeshStandardMaterial({color:0x555555,roughness:0.7}),
+  // Neons
+  nR:new THREE.MeshStandardMaterial({color:0xff1a1a,emissive:0xff1a1a,emissiveIntensity:1.3,roughness:0.02}),
+  nG:new THREE.MeshStandardMaterial({color:0xf0c040,emissive:0xf0c040,emissiveIntensity:1.0,roughness:0.02}),
+  nB:new THREE.MeshStandardMaterial({color:0x4fc3f7,emissive:0x4fc3f7,emissiveIntensity:0.8,roughness:0.02}),
+  nGr:new THREE.MeshStandardMaterial({color:0x44ff88,emissive:0x44ff88,emissiveIntensity:0.7,roughness:0.02}),
+  nPk:new THREE.MeshStandardMaterial({color:0xff6eb4,emissive:0xff6eb4,emissiveIntensity:0.6,roughness:0.02}),
+  nW:new THREE.MeshStandardMaterial({color:0xeeeeff,emissive:0xeeeeff,emissiveIntensity:0.5,roughness:0.05}),
+  // Shared
+  brass:new THREE.MeshStandardMaterial({color:0xb08840,roughness:0.15,metalness:0.9}),
+  chrome:new THREE.MeshStandardMaterial({color:0xcccccc,roughness:0.05,metalness:0.98}),
+  dark:new THREE.MeshStandardMaterial({color:0x060606,roughness:0.9}),
+  steel:new THREE.MeshStandardMaterial({color:0x777777,roughness:0.2,metalness:0.85}),
+  glass:new THREE.MeshStandardMaterial({color:0x88aacc,roughness:0.01,metalness:0.15,transparent:true,opacity:0.12}),
+  uglyDoor:new THREE.MeshStandardMaterial({color:0x4a4035,roughness:0.8}),
+  uglyWindow:new THREE.MeshStandardMaterial({color:0x222830,roughness:0.3,transparent:true,opacity:0.3}),
+  uglyShutter:new THREE.MeshStandardMaterial({color:0x555045,roughness:0.85}),
+  awning:new THREE.MeshStandardMaterial({color:0x3a0000,roughness:0.8}),
+  car:new THREE.MeshStandardMaterial({color:0x1a1a2a,roughness:0.3,metalness:0.6}),
+  carLight:new THREE.MeshStandardMaterial({color:0xdddddd,roughness:0.1,metalness:0.4}),
+  tire:new THREE.MeshStandardMaterial({color:0x111111,roughness:0.9}),
+  tree:new THREE.MeshStandardMaterial({color:0x1a3a0a,roughness:0.85}),
+  trunk:new THREE.MeshStandardMaterial({color:0x3a2810,roughness:0.8}),
+  pot:new THREE.MeshStandardMaterial({color:0x4a3020,roughness:0.75}),
+  fluoro:new THREE.MeshStandardMaterial({color:0xccddcc,emissive:0xccddcc,emissiveIntensity:0.2,roughness:0.1}),
+  yellowLine:new THREE.MeshStandardMaterial({color:0xccaa00,roughness:0.6}),
+  woodDoor:new THREE.MeshStandardMaterial({color:0x2a1608,roughness:0.6}),
+};
+
+/* ===== HELPERS ===== */
+function bx(w,h,d,m){var o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.castShadow=true;o.receiveShadow=true;return o;}
+function cy(rT,rB,h,s,m){var o=new THREE.Mesh(new THREE.CylinderGeometry(rT,rB,h,s),m);o.castShadow=true;return o;}
+function sph(r,m){return new THREE.Mesh(new THREE.SphereGeometry(r,16,12),m);}
+function tor(r,t,m){var o=new THREE.Mesh(new THREE.TorusGeometry(r,t,12,48),m);o.rotation.x=Math.PI/2;return o;}
+function neonT(len,rad,mat){
+  var g=new THREE.Group();
+  g.add(cy(rad,rad,len,12,mat).rotateZ(Math.PI/2));
+  g.add(cy(rad*3.5,rad*3.5,len,8,new THREE.MeshBasicMaterial({color:mat.emissive||0xff0000,transparent:true,opacity:0.04})).rotateZ(Math.PI/2));
+  return g;
+}
+
+var S=new THREE.Group(); // scene root
+
+/* ============================================================
+   STREET — road + sidewalks
+   ============================================================ */
+// Road
+var roadMesh=new THREE.Mesh(new THREE.PlaneGeometry(60,10),M.road);
+roadMesh.rotation.x=-Math.PI/2;roadMesh.position.set(0,0,5);roadMesh.receiveShadow=true;S.add(roadMesh);
+
+// Center line dashes
+for(var ci=-28;ci<=28;ci+=3){
+  S.add(bx(1.5,0.01,0.12,M.yellowLine).translateX(ci).translateY(0.01).translateZ(5));
+}
+
+// Sidewalk — our side
+var swMesh=new THREE.Mesh(new THREE.PlaneGeometry(60,4),M.sidewalk);
+swMesh.rotation.x=-Math.PI/2;swMesh.position.set(0,0.05,-0.5);swMesh.receiveShadow=true;S.add(swMesh);
+// Curb
+S.add(bx(60,0.15,0.2,M.curb).translateY(0.08).translateZ(1.3));
+
+// Sidewalk — far side
+var swFar=new THREE.Mesh(new THREE.PlaneGeometry(60,3),M.sidewalk);
+swFar.rotation.x=-Math.PI/2;swFar.position.set(0,0.05,11);swFar.receiveShadow=true;S.add(swFar);
+S.add(bx(60,0.15,0.2,M.curb).translateY(0.08).translateZ(9.3));
+
+/* ============================================================
+   BUILDINGS — Our side (Z = -2.5 is back wall)
+   Blues Burger at center (X = -3 to 7), ugly shops flanking
+   ============================================================ */
+
+// === UGLY SHOP LEFT 1 (X = -14 to -8) ===
+var ugly1=new THREE.Group();
+ugly1.add(bx(6,5,4,M.uglyBeige).translateY(2.5));
+// Boring windows
+for(var uw=-2;uw<=2;uw+=2){
+  ugly1.add(bx(1.2,1.5,0.05,M.uglyWindow).translateX(uw).translateY(3.5).translateZ(2.02));
+  ugly1.add(bx(1.3,0.08,0.06,M.uglyShutter).translateX(uw).translateY(4.3).translateZ(2.03)); // shutter top
+}
+// Boring door
+ugly1.add(bx(1.2,2.2,0.08,M.uglyDoor).translateY(1.1).translateZ(2.02));
+// Ugly fluorescent light
+ugly1.add(bx(0.6,0.04,0.08,M.fluoro).translateY(2.5).translateZ(2.05));
+ugly1.add(new THREE.PointLight(0xccddcc,2,3).translateY(2.5).translateZ(2.5));
+// Boring sign — flat white box
+ugly1.add(bx(2.5,0.5,0.08,new THREE.MeshStandardMaterial({color:0xddddcc,roughness:0.6})).translateY(3).translateZ(2.05));
+ugly1.position.set(-11,0,-0.5);
+S.add(ugly1);
+
+// === UGLY SHOP LEFT 2 (X = -8 to -3) ===
+var ugly2=new THREE.Group();
+ugly2.add(bx(5,5.5,4,M.uglyPlaster).translateY(2.75));
+// Windows
+for(var uw2=-1.5;uw2<=1.5;uw2+=1.5){
+  ugly2.add(bx(1,1.4,0.05,M.uglyWindow).translateX(uw2).translateY(4).translateZ(2.02));
+}
+ugly2.add(bx(1,2,0.08,M.uglyDoor).translateX(-0.5).translateY(1).translateZ(2.02));
+// Metal shutter (closed)
+ugly2.add(bx(2,2.2,0.06,new THREE.MeshStandardMaterial({color:0x555555,roughness:0.5,metalness:0.6})).translateX(1).translateY(1.1).translateZ(2.03));
+// Horizontal shutter lines
+for(var shl=0;shl<10;shl++){
+  ugly2.add(bx(2,0.01,0.01,new THREE.MeshStandardMaterial({color:0x444444})).translateX(1).translateY(0.2+shl*0.2).translateZ(2.06));
+}
+ugly2.add(new THREE.PointLight(0xccddcc,1,2).translateY(2.8).translateZ(2.5));
+ugly2.position.set(-5.5,0,-0.5);
+S.add(ugly2);
+
+// ============================================================
+// === BLUES BURGER STOREFRONT (X = -1 to 9, center at 4) ===
+// ============================================================
+var bb=new THREE.Group();
+
+// Main building
+bb.add(bx(10,6,4,M.bbBrick).translateX(4).translateY(3));
+
+// === AWNING ===
+bb.add(bx(10.5,0.12,1.5,M.awning).translateX(4).translateY(2.9).translateZ(1.3));
+// Scallop edge — small boxes
+for(var sc=-0.5;sc<=9;sc+=0.4){
+  var scY=Math.sin(sc*4)*0.06;
+  bb.add(bx(0.2,0.08+scY,0.05,M.awning).translateX(sc).translateY(2.82).translateZ(2.0));
+}
+
+// === ENTRANCE DOORS (brass frame) ===
+bb.add(bx(3,2.8,0.08,new THREE.MeshStandardMaterial({color:0x0e0e14,roughness:0.2})).translateX(4).translateY(1.4).translateZ(2.02));
+bb.add(bx(3.2,0.08,0.06,M.brass).translateX(4).translateY(2.85).translateZ(2.04));
+bb.add(bx(0.08,2.8,0.06,M.brass).translateX(2.4).translateY(1.4).translateZ(2.04));
+bb.add(bx(0.08,2.8,0.06,M.brass).translateX(5.6).translateY(1.4).translateZ(2.04));
+bb.add(bx(0.06,2.8,0.06,M.brass).translateX(4).translateY(1.4).translateZ(2.05)); // center divider
+// Glass
+bb.add(bx(1.45,2.2,0.03,M.glass).translateX(3.2).translateY(1.5).translateZ(2.03));
+bb.add(bx(1.45,2.2,0.03,M.glass).translateX(4.8).translateY(1.5).translateZ(2.03));
+// Warm interior glow
+bb.add(new THREE.PointLight(0xff4422,3,4).translateX(4).translateY(2).translateZ(1));
+// Door handles
+bb.add(cy(0.015,0.015,0.18,8,M.brass).translateX(3.92).translateY(1.3).translateZ(2.08));
+bb.add(cy(0.015,0.015,0.18,8,M.brass).translateX(4.08).translateY(1.3).translateZ(2.08));
+
+// === SIDE WINDOWS ===
+bb.add(bx(2.5,2,0.05,M.glass).translateX(1.2).translateY(1.6).translateZ(2.02));
+bb.add(bx(2.5,2,0.05,M.glass).translateX(6.8).translateY(1.6).translateZ(2.02));
+// Window frames brass
+bb.add(bx(2.6,0.06,0.06,M.brass).translateX(1.2).translateY(2.65).translateZ(2.04));
+bb.add(bx(2.6,0.06,0.06,M.brass).translateX(6.8).translateY(2.65).translateZ(2.04));
+// Interior warm glow through windows
+bb.add(new THREE.PointLight(0xff3311,1.5,2.5).translateX(1.2).translateY(1.5).translateZ(1));
+bb.add(new THREE.PointLight(0xff3311,1.5,2.5).translateX(6.8).translateY(1.5).translateZ(1));
+
+// === PINK NEON "OPEN" in left window ===
+var openN=neonT(0.9,0.02,M.nPk);openN.position.set(1.2,2,2.1);bb.add(openN);
+bb.add(new THREE.PointLight(0xff6eb4,5,2.5).translateX(1.2).translateY(2).translateZ(2.5));
+
+// === BLUE ROUTE 66 NEON in right window ===
+bb.add(bx(0.55,0.04,0.04,M.nB).translateX(6.8).translateY(2.3).translateZ(2.1));
+bb.add(bx(0.55,0.04,0.04,M.nB).translateX(6.8).translateY(1.7).translateZ(2.1));
+bb.add(bx(0.04,0.6,0.04,M.nB).translateX(6.5).translateY(2).translateZ(2.1));
+bb.add(bx(0.04,0.6,0.04,M.nB).translateX(7.1).translateY(2).translateZ(2.1));
+bb.add(new THREE.PointLight(0x4fc3f7,4,2.5).translateX(6.8).translateY(2).translateZ(2.5));
+
+// === WALL SCONCES (brass) ===
+[2.5,5.5].forEach(function(sx){
+  bb.add(bx(0.08,0.15,0.1,M.brass).translateX(sx).translateY(2.5).translateZ(2.04));
+  bb.add(new THREE.PointLight(0xffaa66,2,1.5).translateX(sx).translateY(2.6).translateZ(2.3));
+});
+
+bb.position.set(0,0,-0.5);
+S.add(bb);
+
+// ============================================================
+// === THE BIG SPINNING NEON SIGN — ON THE ROOF ===
+// ============================================================
+var signGroup=new THREE.Group();
+
+// STEEL SUPPORT STRUCTURE on roof
+// Main vertical beam
+signGroup.add(cy(0.12,0.15,4,8,M.steel).translateY(2));
+// Cross braces (X shape)
+signGroup.add(bx(0.08,3,0.08,M.steel).translateY(2).translateX(-0.6).rotateZ(0.15));
+signGroup.add(bx(0.08,3,0.08,M.steel).translateY(2).translateX(0.6).rotateZ(-0.15));
+// Horizontal support beam
+signGroup.add(bx(2.5,0.12,0.12,M.steel).translateY(0.3));
+// Diagonal braces
+signGroup.add(bx(0.06,1.8,0.06,M.steel).translateY(1).translateX(-0.8).rotateZ(0.35));
+signGroup.add(bx(0.06,1.8,0.06,M.steel).translateY(1).translateX(0.8).rotateZ(-0.35));
+// Base feet bolted to roof
+signGroup.add(bx(0.5,0.08,0.5,M.steel).translateX(-0.8).translateY(0.05));
+signGroup.add(bx(0.5,0.08,0.5,M.steel).translateX(0.8).translateY(0.05));
+// Guy wires (thin rods for realism)
+signGroup.add(cy(0.01,0.01,3.5,4,M.chrome).translateY(2).translateX(-1.5).rotateZ(0.4));
+signGroup.add(cy(0.01,0.01,3.5,4,M.chrome).translateY(2).translateX(1.5).rotateZ(-0.4));
+
+// THE SIGN — ornate frame that spins — BIGGER
+var spinSign=new THREE.Group();
+
+// Sign backing board — BIGGER
+spinSign.add(bx(4.2,5,0.18,M.dark));
+
+// === ORNATE GOLD NEON BORDER — BIGGER ===
+var fw=4.3,fh=5.1;
+spinSign.add(bx(fw,0.07,0.09,M.nG).translateY(fh/2));   // top
+spinSign.add(bx(fw,0.07,0.09,M.nG).translateY(-fh/2));  // bottom
+spinSign.add(bx(0.07,fh,0.09,M.nG).translateX(-fw/2));  // left
+spinSign.add(bx(0.07,fh,0.09,M.nG).translateX(fw/2));   // right
+// Inner rectangle
+var iw=3.8,ih=4.6;
+spinSign.add(bx(iw,0.05,0.07,M.nG).translateY(ih/2));
+spinSign.add(bx(iw,0.05,0.07,M.nG).translateY(-ih/2));
+spinSign.add(bx(0.05,ih,0.07,M.nG).translateX(-iw/2));
+spinSign.add(bx(0.05,ih,0.07,M.nG).translateX(iw/2));
+
+// Corner rosettes
+[[-fw/2,fh/2],[fw/2,fh/2],[-fw/2,-fh/2],[fw/2,-fh/2]].forEach(function(p){
+  spinSign.add(tor(0.08,0.015,M.nG).translateX(p[0]).translateY(p[1]).translateZ(0.05));
+  spinSign.add(sph(0.025,M.nG).translateX(p[0]).translateY(p[1]).translateZ(0.08));
+});
+
+// Top scrollwork
+spinSign.add(new THREE.Mesh(new THREE.TorusGeometry(0.3,0.025,8,16,Math.PI),M.nG).translateY(fh/2+0.08).translateZ(0.05));
+// Bottom scrollwork
+spinSign.add(new THREE.Mesh(new THREE.TorusGeometry(0.25,0.02,8,16,Math.PI),M.nG).translateY(-fh/2-0.05).translateZ(0.05).rotateX(Math.PI));
+// Side diamonds
+spinSign.add(sph(0.04,M.nG).translateX(-fw/2-0.08).translateZ(0.05));
+spinSign.add(sph(0.04,M.nG).translateX(fw/2+0.08).translateZ(0.05));
+
+// === BUILD LETTERS FROM GEOMETRY — like real bent neon tubes ===
+// Each letter built from boxes (straight segments) positioned to form the letter shape
+// Letter height ~1.2, spacing ~0.15 between letters
+
+function neonLetter(segments, mat, offsetX, offsetY, scl) {
+  var g = new THREE.Group();
+  segments.forEach(function(s) {
+    // s = [x, y, w, h] relative to letter origin
+    var piece = bx(s[2] * scl, s[3] * scl, 0.08, mat);
+    piece.position.set(s[0] * scl + offsetX, s[1] * scl + offsetY, 0.14);
+    g.add(piece);
+    // Glow halo
+    var halo = new THREE.Mesh(new THREE.BoxGeometry(s[2] * scl + 0.06, s[3] * scl + 0.06, 0.06),
+      new THREE.MeshBasicMaterial({color: mat.emissive, transparent: true, opacity: 0.04}));
+    halo.position.set(s[0] * scl + offsetX, s[1] * scl + offsetY, 0.12);
+    g.add(halo);
+  });
+  return g;
+}
+
+// Letter definitions: [x, y, width, height] for each segment
+// B = left vertical + top horiz + mid horiz + bot horiz + top-right vert + bot-right vert
+var L_B = [[0,0,0.08,1.2],[0,0.56,0.45,0.08],[0,0,0.45,0.08],[0,-0.56,0.45,0.08],[0.42,0.28,0.08,0.56],[0.42,-0.28,0.08,0.56]];
+var L_L = [[0,0,0.08,1.2],[0.2,-0.56,0.45,0.08]];
+var L_U = [[-0.2,0,0.08,1.2],[0.2,0,0.08,1.2],[0,-0.56,0.48,0.08]];
+var L_E = [[0,0,0.08,1.2],[0.2,0.56,0.45,0.08],[0.15,0,0.35,0.08],[0.2,-0.56,0.45,0.08]];
+var L_S = [[0.2,0.56,0.45,0.08],[0,0.28,0.08,0.56],[0.2,0,0.45,0.08],[0.42,-0.28,0.08,0.56],[0.2,-0.56,0.45,0.08]];
+
+// "BLUES" — red neon, big
+var bluesLetters = [L_B, L_L, L_U, L_E, L_S];
+var bluesSpacing = 0.9;
+var bluesStart = -(bluesLetters.length - 1) * bluesSpacing / 2;
+var bluesGroup = new THREE.Group();
+bluesLetters.forEach(function(letter, i) {
+  bluesGroup.add(neonLetter(letter, M.nR, bluesStart + i * bluesSpacing, 0.8, 1.3));
+});
+spinSign.add(bluesGroup);
+
+// Letter defs for BURGER
+var L_R = [[0,0,0.08,1.2],[0,0.56,0.4,0.08],[0.38,0.28,0.08,0.48],[0,0,0.4,0.08],[0.2,-0.28,0.08,0.28],[0.38,-0.42,0.08,0.28]];
+var L_G = [[0.22,0.56,0.48,0.08],[-0.02,0,0.08,1.2],[0.22,-0.56,0.48,0.08],[0.44,-0.14,0.08,0.42],[0.22,-0.05,0.28,0.08]];
+
+var burgerLetters = [L_B, L_U, L_R, L_G, L_E, L_R];
+var burgerSpacing = 0.65;
+var burgerStart = -(burgerLetters.length - 1) * burgerSpacing / 2;
+var burgerGroup = new THREE.Group();
+burgerLetters.forEach(function(letter, i) {
+  burgerGroup.add(neonLetter(letter, M.nG, burgerStart + i * burgerSpacing, -0.5, 0.85));
+});
+spinSign.add(burgerGroup);
+
+// === "OLD NORTH TLV" — simple blue neon bar (small, reads from light pattern) ===
+var tlvN = neonT(1.8, 0.025, M.nB); tlvN.position.set(0, -1.4, 0.14); spinSign.add(tlvN);
+// Small blue dots for star accents
+spinSign.add(sph(0.04, M.nB).translateX(-1.0).translateY(-1.4).translateZ(0.14));
+spinSign.add(sph(0.04, M.nB).translateX(1.0).translateY(-1.4).translateZ(0.14));
+
+// === GREEN NEON GUITAR above BLUES text ===
+spinSign.add(tor(0.35,0.025,M.nGr).translateY(2.0).translateZ(0.12));
+spinSign.add(tor(0.25,0.02,M.nGr).translateY(2.4).translateZ(0.12));
+spinSign.add(bx(0.04,0.7,0.04,M.nGr).translateY(2.9).translateZ(0.12));
+spinSign.add(bx(0.12,0.2,0.04,M.nGr).translateY(3.3).translateZ(0.12));
+
+// === CHASE LIGHTS around border (bulbs) ===
+var bulbs=[];
+var bulbGeo=new THREE.SphereGeometry(0.04,6,6);
+var totalBulbs=40;
+for(var bi=0;bi<totalBulbs;bi++){
+  var angle=bi/totalBulbs;
+  var bx2,by2;
+  var perim=2*(fw+fh);
+  var pos=angle*perim;
+  if(pos<fw){bx2=-fw/2+pos;by2=fh/2+0.1;}
+  else if(pos<fw+fh){bx2=fw/2+0.1;by2=fh/2-(pos-fw);}
+  else if(pos<2*fw+fh){bx2=fw/2-(pos-fw-fh);by2=-fh/2-0.1;}
+  else{bx2=-fw/2-0.1;by2=-fh/2+(pos-2*fw-fh);}
+  var bulbMat=new THREE.MeshStandardMaterial({color:0xffcc00,emissive:0xffcc00,emissiveIntensity:0,roughness:0.2});
+  var bulb=new THREE.Mesh(bulbGeo,bulbMat);
+  bulb.position.set(bx2,by2,0.1);
+  spinSign.add(bulb);
+  bulbs.push({mesh:bulb,mat:bulbMat,idx:bi});
+}
+
+// Sign lights — STRONGER for rooftop visibility
+spinSign.add(new THREE.PointLight(0xff1a1a,40,12).translateZ(2).translateY(0.8));
+spinSign.add(new THREE.PointLight(0xf0c040,25,10).translateZ(2).translateY(-0.1));
+spinSign.add(new THREE.PointLight(0x4fc3f7,8,6).translateZ(1.5).translateY(-0.9));
+spinSign.add(new THREE.PointLight(0x44ff88,6,5).translateZ(1.2).translateY(2));
+// Backlight too — visible from behind
+spinSign.add(new THREE.PointLight(0xff1a1a,15,8).translateZ(-2).translateY(0));
+
+spinSign.position.y=4.5; // centered on the pole
+signGroup.add(spinSign);
+
+// Position on ROOF of Blues Burger building (building top is Y=6, X center=4)
+signGroup.position.set(4,6.0,0);
+S.add(signGroup);
+
+// === NEON TRIM along BB roofline — connects sign to building ===
+// Front roofline
+bb.add(neonT(10,0.02,M.nR).translateX(4).translateY(5.95).translateZ(2.05));
+bb.add(neonT(10,0.015,M.nG).translateX(4).translateY(6.05).translateZ(2.05));
+// Side rooflines
+bb.add(bx(0.04,0.04,4,M.nR).translateX(-1).translateY(6).translateZ(0));
+bb.add(bx(0.04,0.04,4,M.nR).translateX(9).translateY(6).translateZ(0));
+// Roofline lights casting down onto sidewalk
+bb.add(new THREE.PointLight(0xff1a1a,8,6).translateX(4).translateY(5.9).translateZ(2.5));
+bb.add(new THREE.PointLight(0xf0c040,4,4).translateX(4).translateY(6).translateZ(2.5));
+S.add(signGroup);
+
+// === UGLY SHOP RIGHT 1 (X = 10 to 15) ===
+var ugly3=new THREE.Group();
+ugly3.add(bx(5,4.5,4,M.uglyPlaster2).translateY(2.25));
+ugly3.add(bx(1.5,1.3,0.05,M.uglyWindow).translateX(-1).translateY(3.2).translateZ(2.02));
+ugly3.add(bx(1.5,1.3,0.05,M.uglyWindow).translateX(1).translateY(3.2).translateZ(2.02));
+ugly3.add(bx(1,2,0.08,M.uglyDoor).translateY(1).translateZ(2.02));
+// AC unit
+ugly3.add(bx(0.6,0.4,0.5,new THREE.MeshStandardMaterial({color:0x888888,roughness:0.5,metalness:0.4})).translateX(1.8).translateY(3.5).translateZ(2.3));
+ugly3.add(new THREE.PointLight(0xccddcc,1,2).translateY(2.5).translateZ(2.5));
+ugly3.position.set(12,0,-0.5);
+S.add(ugly3);
+
+// === UGLY SHOP RIGHT 2 ===
+var ugly4=new THREE.Group();
+ugly4.add(bx(5,5,4,M.uglyGray).translateY(2.5));
+// Graffiti-hint colored patch
+ugly4.add(bx(1,0.6,0.02,new THREE.MeshStandardMaterial({color:0x3a5566,roughness:0.7})).translateX(-1.5).translateY(1.5).translateZ(2.02));
+ugly4.add(bx(1.2,1.4,0.05,M.uglyWindow).translateY(3.5).translateZ(2.02));
+ugly4.add(bx(2.5,2,0.06,new THREE.MeshStandardMaterial({color:0x555555,roughness:0.5,metalness:0.6})).translateY(1).translateZ(2.03)); // metal shutter
+for(var shl2=0;shl2<9;shl2++){
+  ugly4.add(bx(2.5,0.01,0.01,new THREE.MeshStandardMaterial({color:0x444})).translateY(0.2+shl2*0.2).translateZ(2.06));
+}
+ugly4.add(new THREE.PointLight(0xccddcc,0.5,2).translateY(2.5).translateZ(2.5));
+ugly4.position.set(17,0,-0.5);
+S.add(ugly4);
+
+/* ============================================================
+   FAR SIDE BUILDINGS (across street, Z = 12+)
+   ============================================================ */
+for(var fb=-25;fb<=25;fb+=7){
+  var farB=new THREE.Group();
+  var fH=3.5+Math.random()*2;
+  var fW=5+Math.random()*2;
+  farB.add(bx(fW,fH,3,M.uglyPlaster).translateY(fH/2));
+  // Random windows
+  for(var fwi=-fW/3;fwi<=fW/3;fwi+=fW/3){
+    farB.add(bx(0.9,1.2,0.05,M.uglyWindow).translateX(fwi).translateY(fH*0.6).translateZ(-1.52));
+  }
+  farB.position.set(fb,0,13.5);farB.rotation.y=Math.PI;
+  S.add(farB);
+}
+
+/* ============================================================
+   STREET FURNITURE
+   ============================================================ */
+// Street lamps
+function mkLamp(lx,lz){
+  var lg=new THREE.Group();
+  lg.add(cy(0.06,0.08,4,8,M.steel).translateY(2));
+  lg.add(bx(1.2,0.04,0.04,M.steel).translateY(4).translateX(0.5));
+  lg.add(bx(0.4,0.15,0.25,M.steel).translateY(3.92).translateX(1.1));
+  var ll=new THREE.PointLight(0xffddaa,8,8);ll.position.set(1.1,3.8,0);ll.castShadow=true;lg.add(ll);
+  lg.add(sph(0.06,new THREE.MeshStandardMaterial({color:0xffdd88,emissive:0xffdd88,emissiveIntensity:1})).translateY(3.85).translateX(1.1));
+  lg.position.set(lx,0,lz);return lg;
+}
+S.add(mkLamp(-8,1.5));S.add(mkLamp(0,1.5));S.add(mkLamp(10,1.5));S.add(mkLamp(18,1.5));
+
+// Trees
+function mkTree(tx,tz){
+  var tg=new THREE.Group();
+  tg.add(cy(0.1,0.12,2,6,M.trunk).translateY(1));
+  tg.add(sph(0.8,M.tree).translateY(2.5));
+  tg.add(sph(0.6,new THREE.MeshStandardMaterial({color:0x1a4a0a,roughness:0.85})).translateY(3).translateX(0.3));
+  tg.add(sph(0.5,M.tree).translateY(2.8).translateX(-0.3).translateZ(0.2));
+  // Tree pit
+  tg.add(bx(0.8,0.05,0.8,new THREE.MeshStandardMaterial({color:0x2a2018,roughness:0.9})).translateY(0.03));
+  tg.position.set(tx,0,tz);return tg;
+}
+S.add(mkTree(-6,1.5));S.add(mkTree(10,1.5));
+
+// Parked cars
+function mkCar(cx2,cz,col,rot){
+  var cg=new THREE.Group();
+  var cMat=new THREE.MeshStandardMaterial({color:col,roughness:0.3,metalness:0.6});
+  // Body
+  cg.add(bx(3.5,0.9,1.6,cMat).translateY(0.6));
+  // Cabin
+  cg.add(bx(1.8,0.7,1.4,new THREE.MeshStandardMaterial({color:0x111122,roughness:0.1,metalness:0.3,transparent:true,opacity:0.5})).translateY(1.2).translateX(-0.2));
+  // Wheels
+  [[-1.1,-0.65],[1.1,-0.65],[-1.1,0.65],[1.1,0.65]].forEach(function(wp){
+    cg.add(cy(0.3,0.3,0.15,12,M.tire).rotateZ(Math.PI/2).translateX(wp[0]).translateY(0.3).translateZ(wp[1]));
+    cg.add(cy(0.18,0.18,0.16,8,M.chrome).rotateZ(Math.PI/2).translateX(wp[0]).translateY(0.3).translateZ(wp[1]));
+  });
+  // Headlights
+  cg.add(sph(0.08,M.carLight).translateX(1.75).translateY(0.55).translateZ(-0.5));
+  cg.add(sph(0.08,M.carLight).translateX(1.75).translateY(0.55).translateZ(0.5));
+  // Taillights
+  cg.add(sph(0.07,new THREE.MeshStandardMaterial({color:0xff0000,emissive:0xff0000,emissiveIntensity:0.2})).translateX(-1.75).translateY(0.55).translateZ(-0.5));
+  cg.add(sph(0.07,new THREE.MeshStandardMaterial({color:0xff0000,emissive:0xff0000,emissiveIntensity:0.2})).translateX(-1.75).translateY(0.55).translateZ(0.5));
+  cg.position.set(cx2,0,cz);cg.rotation.y=rot;return cg;
+}
+S.add(mkCar(-5,3.5,0x2a2a3a,0));
+S.add(mkCar(12,3.5,0x4a4a4a,0));
+S.add(mkCar(-12,7,0x3a2a1a,Math.PI));
+S.add(mkCar(8,7.5,0x1a3a1a,Math.PI));
+
+// Trash can
+S.add(cy(0.2,0.18,0.6,8,new THREE.MeshStandardMaterial({color:0x333333,roughness:0.6,metalness:0.4})).translateX(9).translateY(0.35).translateZ(1));
+
+// Bench
+var bench=new THREE.Group();
+bench.add(bx(1.5,0.06,0.35,M.woodDoor).translateY(0.5));
+bench.add(bx(1.5,0.4,0.06,M.woodDoor).translateY(0.7).translateZ(-0.15));
+bench.add(cy(0.03,0.03,0.5,6,M.steel).translateX(-0.6).translateY(0.25));
+bench.add(cy(0.03,0.03,0.5,6,M.steel).translateX(0.6).translateY(0.25));
+bench.position.set(-2,0,0.8);S.add(bench);
+
+// Flower pots near BB entrance
+[2.2,5.8].forEach(function(fpx){
+  S.add(cy(0.2,0.15,0.35,8,M.pot).translateX(fpx).translateY(0.22).translateZ(1.2));
+  S.add(sph(0.25,new THREE.MeshStandardMaterial({color:0x2a5a1a,roughness:0.8})).translateX(fpx).translateY(0.5).translateZ(1.2));
+});
+
+/* ============================================================
+   NEON GLOW ON SIDEWALK (red pool from BB sign)
+   ============================================================ */
+var glowPool=new THREE.Mesh(new THREE.PlaneGeometry(12,5),
+  new THREE.MeshBasicMaterial({color:0xff1a1a,transparent:true,opacity:0.03}));
+glowPool.rotation.x=-Math.PI/2;glowPool.position.set(4,0.07,2);S.add(glowPool);
+
+var goldPool=new THREE.Mesh(new THREE.PlaneGeometry(10,4),
+  new THREE.MeshBasicMaterial({color:0xf0c040,transparent:true,opacity:0.02}));
+goldPool.rotation.x=-Math.PI/2;goldPool.position.set(4,0.08,3);S.add(goldPool);
+
+// Extra glow on road from rooftop sign
+var roadGlow=new THREE.Mesh(new THREE.PlaneGeometry(8,6),
+  new THREE.MeshBasicMaterial({color:0xff1a1a,transparent:true,opacity:0.015}));
+roadGlow.rotation.x=-Math.PI/2;roadGlow.position.set(4,0.02,5);S.add(roadGlow);
+
+scene.add(S);
+
+/* ============================================================
+   GLOBAL LIGHTS
+   ============================================================ */
+scene.add(new THREE.AmbientLight(0x060610,0.4));
+// Moon
+var moon=new THREE.DirectionalLight(0x1a1a3a,0.1);moon.position.set(10,15,-5);scene.add(moon);
+
+/* ============================================================
+   CAMERA PRESETS
+   ============================================================ */
+var presets=[
+  {x:4,y:10,z:22,lx:4,ly:4,lz:0,name:'Street View',desc:'The rooftop sign towers over the block<br>Visible from a block away'},
+  {x:4,y:8,z:10,lx:4,ly:9,lz:0,name:'The Sign',desc:'Vegas-style spinning neon on the roof<br>Gold scrollwork · Chase lights · Guitar'},
+  {x:4,y:2.5,z:4,lx:4,ly:1.5,lz:0,name:'Entrance',desc:'Brass doors · Pink "Open" neon<br>Blue Route 66 · Warm interior glow'},
+  {x:4,y:5,z:14,lx:4,ly:5,lz:0,name:'Across Street',desc:'The view customers see first<br>Rooftop sign pulls them in'},
+  {x:-10,y:3,z:6,lx:4,ly:5,lz:0,name:'Night Walk',desc:'Walking down the street at night<br>One rooftop blazes with neon'},
+];
+
+var curP=0;
+var cT={x:presets[0].x,y:presets[0].y,z:presets[0].z};
+var lT={x:presets[0].lx,y:presets[0].ly,z:presets[0].lz};
+var cC={x:presets[0].x,y:presets[0].y,z:presets[0].z};
+var lC={x:presets[0].lx,y:presets[0].ly,z:presets[0].lz};
+
+var LN=document.getElementById('LN'),LD=document.getElementById('LD'),LBL=document.getElementById('LBL');
+var cbs=document.querySelectorAll('.cb');
+var orbitY=0,orbitX=0;
+
+function goTo(i){
+  if(i===curP)return;curP=i;orbitY=0;orbitX=0;
+  var p=presets[i];cT={x:p.x,y:p.y,z:p.z};lT={x:p.lx,y:p.ly,z:p.lz};
+  LBL.style.opacity='0';
+  setTimeout(function(){LN.innerHTML=p.name;LD.innerHTML=p.desc;LBL.style.opacity='1';},350);
+  cbs.forEach(function(c){c.classList.remove('on');});cbs[i].classList.add('on');
+}
+cbs.forEach(function(c){c.addEventListener('click',function(){goTo(+c.dataset.i);});});
+setTimeout(function(){LBL.style.opacity='1';},500);
+
+// Orbit
+var drag=false,pm={x:0,y:0};
+canvas.addEventListener('pointerdown',function(e){drag=true;pm={x:e.clientX,y:e.clientY};});
+canvas.addEventListener('pointermove',function(e){
+  if(!drag)return;
+  orbitY+=(e.clientX-pm.x)*0.003;orbitX+=(e.clientY-pm.y)*0.003;
+  orbitX=Math.max(-0.5,Math.min(0.8,orbitX));pm={x:e.clientX,y:e.clientY};
+  var p=presets[curP];var dx=p.x-p.lx,dz=p.z-p.lz;
+  var dist=Math.sqrt(dx*dx+dz*dz);if(dist<1)dist=5;
+  var ba=Math.atan2(dx,dz);
+  cT.x=p.lx+Math.sin(ba+orbitY)*dist;cT.z=p.lz+Math.cos(ba+orbitY)*dist;cT.y=p.y+orbitX*4;
+});
+canvas.addEventListener('pointerup',function(){drag=false;});
+canvas.addEventListener('pointerleave',function(){drag=false;});
+canvas.addEventListener('wheel',function(e){
+  var dx=cT.x-lT.x,dy=cT.y-lT.y,dz=cT.z-lT.z;
+  var len=Math.sqrt(dx*dx+dy*dy+dz*dz);
+  var nL=Math.max(2,Math.min(30,len*(1+e.deltaY*0.001)));
+  cT.x=lT.x+dx/len*nL;cT.y=lT.y+dy/len*nL;cT.z=lT.z+dz/len*nL;
+},{passive:true});
+
+/* ============================================================
+   RENDER LOOP
+   ============================================================ */
+var clock=new THREE.Clock();var elapsed=0;
+function loop(){
+  requestAnimationFrame(loop);
+  var dt=Math.min(clock.getDelta(),0.05);elapsed+=dt;
+
+  // Smooth camera
+  cC.x+=(cT.x-cC.x)*0.04;cC.y+=(cT.y-cC.y)*0.04;cC.z+=(cT.z-cC.z)*0.04;
+  lC.x+=(lT.x-lC.x)*0.04;lC.y+=(lT.y-lC.y)*0.04;lC.z+=(lT.z-lC.z)*0.04;
+  cam.position.set(cC.x,cC.y,cC.z);cam.lookAt(lC.x,lC.y,lC.z);
+
+  // === SPIN THE SIGN ===
+  spinSign.rotation.y+=dt*0.4;
+
+  // === CHASE LIGHTS ===
+  var chasePos=Math.floor(elapsed*8)%totalBulbs;
+  bulbs.forEach(function(b){
+    var dist=((b.idx-chasePos+totalBulbs)%totalBulbs);
+    if(dist<4){b.mat.emissiveIntensity=1.5-dist*0.35;b.mat.color.setHex(dist<2?0xffcc00:0xff6600);}
+    else{b.mat.emissiveIntensity=0.05;b.mat.color.setHex(0x332200);}
+  });
+
+  // === NEON FLICKER ===
+  var flk=1;
+  if(Math.sin(elapsed*15)>0.97)flk=0.55;
+  if(Math.sin(elapsed*7.3+2)>0.98)flk*=0.65;
+  M.nR.emissiveIntensity=1.3*flk;
+  M.nG.emissiveIntensity=1.0*(0.9+Math.sin(elapsed*2)*0.1);
+
+  ren.render(scene,cam);
+}
+loop();
+
+window.addEventListener('resize',function(){W=innerWidth;H=innerHeight;cam.aspect=W/H;cam.updateProjectionMatrix();ren.setSize(W,H);});
+</script>
+</body>
+</html>

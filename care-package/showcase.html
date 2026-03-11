@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blues Burger — The Care Package</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Oswald:wght@200;300;400;500;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,400&family=Bangers&display=swap" rel="stylesheet">
+<style>
+:root{
+  --nr:#ff1a1a;--nrg:rgba(255,26,26,0.7);--nrd:#8b0000;
+  --ng:#f0c040;--ngg:rgba(240,192,64,0.6);
+  --nb:#4fc3f7;--ngreen:#44ff88;--npink:#ff6eb4;
+  --bg:#050508;--bg2:#0a0c12;
+  --gold:#c9a84c;--gold2:#e8d5a0;--brass:#b08840;
+  --cream:#f2ece0;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--cream);font-family:'Oswald',sans-serif;overflow-x:hidden}
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.02'/%3E%3C/svg%3E");pointer-events:none;z-index:10000}
+
+.rv{opacity:0;transform:translateY(35px);transition:opacity .9s,transform .9s}.rv.v{opacity:1;transform:translateY(0)}.d1{transition-delay:.15s}.d2{transition-delay:.3s}.d3{transition-delay:.45s}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;position:relative;overflow:hidden;padding:80px 20px;background:radial-gradient(ellipse 80% 60% at 50% 50%,rgba(240,192,64,.04) 0%,transparent 40%),radial-gradient(ellipse 50% 40% at 50% 55%,rgba(255,26,26,.03) 0%,transparent 50%),var(--bg)}
+.hero h1{font-family:'Playfair Display',serif;font-weight:900;font-size:4.5rem;letter-spacing:4px;text-transform:uppercase;line-height:1}
+.hero h1 .w1{display:block;color:var(--ng);text-shadow:0 0 10px var(--ng),0 0 25px var(--ngg),0 0 50px rgba(240,192,64,.25);animation:gp 4s ease-in-out infinite alternate}
+.hero h1 .w2{display:block;font-size:1.6rem;letter-spacing:14px;color:var(--nr);text-shadow:0 0 8px var(--nr),0 0 20px var(--nrg);margin-top:8px}
+@keyframes gp{0%{text-shadow:0 0 10px var(--ng),0 0 25px var(--ngg),0 0 50px rgba(240,192,64,.25)}100%{text-shadow:0 0 15px var(--ng),0 0 35px var(--ngg),0 0 70px rgba(240,192,64,.35)}}
+.hero-line{width:120px;height:2px;background:var(--ng);margin:20px auto;box-shadow:0 0 6px var(--ng),0 0 12px var(--ngg)}
+.hero-sub{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:1.3rem;opacity:.35;letter-spacing:3px;max-width:500px;margin:0 auto}
+.hero-tag{font-weight:200;font-size:.5rem;letter-spacing:8px;text-transform:uppercase;color:var(--nr);opacity:.2;margin-top:25px}
+
+.gl{height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:.1}
+
+/* SECTIONS */
+.sec{padding:120px 20px;position:relative}
+.s1{background:var(--bg2)}.s2{background:var(--bg)}
+.sl{font-weight:200;font-size:.55rem;letter-spacing:10px;text-transform:uppercase;color:var(--ng);opacity:.35;text-align:center;display:block;margin-bottom:12px}
+.sh{font-family:'Playfair Display',serif;font-weight:700;font-size:2.8rem;text-align:center;letter-spacing:2px;margin-bottom:20px;line-height:1.2}
+.sh em{color:var(--nr);text-shadow:0 0 12px rgba(255,26,26,.12);font-style:italic}
+.sh-sub{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:1rem;text-align:center;opacity:.3;margin-bottom:60px;max-width:550px;margin-left:auto;margin-right:auto}
+
+/* PRODUCT LAYOUT */
+.product{max-width:1100px;margin:0 auto 80px;display:grid;grid-template-columns:1.2fr 1fr;gap:50px;align-items:center}
+.product.flip{grid-template-columns:1fr 1.2fr}.product.flip .ptx{order:-1}
+
+.ptx h3{font-family:'Playfair Display',serif;font-weight:700;font-size:1.8rem;letter-spacing:1px;margin-bottom:14px}
+.ptx h3 em{color:var(--nr);text-shadow:0 0 8px rgba(255,26,26,.1);font-style:italic}
+.ptx p{font-family:'Cormorant Garamond',serif;font-size:.9rem;line-height:2.1;opacity:.35;font-style:italic}
+.ptx .callout{margin-top:16px;padding:12px 18px;border-left:2px solid var(--nr);background:rgba(255,26,26,.02);font-family:'Oswald',sans-serif;font-weight:300;font-size:.7rem;letter-spacing:2px;line-height:1.8;opacity:.5}
+.ptx .callout strong{color:var(--ng);font-weight:500}
+
+.tags{margin-top:18px;display:flex;flex-wrap:wrap;gap:6px}
+.tag{padding:4px 11px;border:1px solid rgba(240,192,64,.1);font-size:.48rem;letter-spacing:3px;text-transform:uppercase;color:var(--ng);opacity:.35;transition:all .3s;font-weight:300}
+.tag:hover{border-color:var(--nr);color:var(--nr);opacity:.8}
+
+/* SVG scene */
+.pscene{width:100%;aspect-ratio:1/1;overflow:visible;position:relative}
+
+/* OVERVIEW GRID */
+.overview{max-width:1000px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:20px;text-align:center}
+.ov-item{padding:30px 15px;border:1px solid rgba(240,192,64,.06);transition:all .5s;cursor:default;background:rgba(10,12,18,.5)}
+.ov-item:hover{border-color:var(--nr);transform:translateY(-6px);box-shadow:0 12px 30px rgba(255,26,26,.06)}
+.ov-num{font-family:'Playfair Display',serif;font-weight:900;font-size:2.5rem;color:var(--nr);text-shadow:0 0 10px rgba(255,26,26,.15);line-height:1;margin-bottom:6px}
+.ov-lbl{font-weight:200;font-size:.5rem;letter-spacing:4px;text-transform:uppercase;opacity:.3}
+
+/* CTA */
+.cta{padding:120px 20px;text-align:center;background:radial-gradient(ellipse 60% 40% at 50% 50%,rgba(240,192,64,.04) 0%,transparent 50%),var(--bg)}
+.cta h2{font-family:'Playfair Display',serif;font-weight:900;font-size:3rem;letter-spacing:3px;text-transform:uppercase;margin-bottom:10px;line-height:1.1}
+.cta h2 .c1{display:block;color:var(--ng);text-shadow:0 0 10px var(--ng),0 0 25px var(--ngg)}
+.cta h2 .c2{display:block;color:var(--nr);text-shadow:0 0 10px var(--nr),0 0 25px var(--nrg);font-size:2rem;letter-spacing:8px}
+.cta p{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:.95rem;color:var(--gold2);opacity:.25;margin-bottom:35px;letter-spacing:3px}
+.btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.btn{padding:15px 45px;font-weight:400;font-size:.75rem;letter-spacing:6px;text-transform:uppercase;text-decoration:none;border:1px solid;cursor:pointer;transition:all .4s;position:relative;overflow:hidden}
+.btn::before{content:'';position:absolute;inset:0;transform:scaleX(0);transform-origin:left;transition:transform .4s;z-index:-1}
+.btn:hover::before{transform:scaleX(1)}
+.br{color:var(--nr);border-color:var(--nr);box-shadow:0 0 10px rgba(255,26,26,.08)}.br::before{background:var(--nr)}.br:hover{color:#fff;box-shadow:0 0 30px rgba(255,26,26,.2)}
+.bgd{color:var(--ng);border-color:rgba(240,192,64,.2)}.bgd::before{background:var(--ng)}.bgd:hover{color:var(--bg)}
+
+footer{padding:30px;text-align:center;background:#030305;border-top:1px solid rgba(240,192,64,.04)}
+.fb{font-family:'Playfair Display',serif;font-weight:900;font-size:.85rem;letter-spacing:6px;text-transform:uppercase;color:var(--ng);text-shadow:0 0 8px rgba(240,192,64,.2)}
+.fd{font-weight:200;font-size:.45rem;letter-spacing:5px;text-transform:uppercase;opacity:.1;margin-top:8px}
+
+@media(max-width:900px){.product,.product.flip{grid-template-columns:1fr;gap:30px}.product.flip .ptx{order:0}.hero h1 .w1{font-size:3rem}.overview{grid-template-columns:repeat(2,1fr)}.sh{font-size:2.2rem}}
+@media(max-width:500px){.hero h1 .w1{font-size:2.2rem}.overview{grid-template-columns:1fr 1fr;gap:10px}}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div>
+    <h1><span class="w1">The Care Package</span><span class="w2">Takeaway Concept</span></h1>
+    <div class="hero-line"></div>
+    <p class="hero-sub">Every Wolt order is a brand experience. Not a paper bag — a moment.</p>
+    <p class="hero-tag">Blues Burger · Packaging Design Concept · 2026</p>
+  </div>
+</section>
+
+<div class="gl"></div>
+
+<!-- OVERVIEW -->
+<section class="sec s1">
+  <span class="sl rv">What's Inside</span>
+  <h2 class="sh rv">The <em>Care Package</em></h2>
+  <p class="sh-sub rv">Four items. Every order. Each one a piece of the brand that goes home with the customer and never gets thrown away.</p>
+
+  <div class="overview">
+    <div class="ov-item rv"><div class="ov-num">01</div><div class="ov-lbl">Vinyl Burger Box</div></div>
+    <div class="ov-item rv d1"><div class="ov-num">02</div><div class="ov-lbl">Fries Amp Box</div></div>
+    <div class="ov-item rv d2"><div class="ov-num">03</div><div class="ov-lbl">Album Cover Sleeve</div></div>
+    <div class="ov-item rv d3"><div class="ov-num">04</div><div class="ov-lbl">Guitar Pick</div></div>
+  </div>
+</section>
+
+<div class="gl"></div>
+
+<!-- ======== 1. VINYL BURGER BOX ======== -->
+<section class="sec s2">
+  <div class="product rv">
+    <div class="pscene">
+      <svg viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="sh1"><feDropShadow dx="4" dy="8" stdDeviation="12" flood-color="#000" flood-opacity=".4"/></filter>
+          <filter id="ng1"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <filter id="ng2"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <radialGradient id="vg" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#1a1a1a"/><stop offset="14%" stop-color="#1a1a1a"/><stop offset="15%" stop-color="#ff1a1a"/><stop offset="16.5%" stop-color="#8b0000"/><stop offset="17%" stop-color="#111"/><stop offset="100%" stop-color="#0a0a0a"/></radialGradient>
+        </defs>
+
+        <!-- Shadow -->
+        <ellipse cx="250" cy="430" rx="180" ry="20" fill="rgba(0,0,0,.3)"/>
+
+        <!-- === THE BOX — vinyl record shape === -->
+        <g filter="url(#sh1)">
+          <!-- Outer circle — the box lid -->
+          <circle cx="250" cy="240" r="195" fill="#111" stroke="#1a1a1a" stroke-width="2"/>
+
+          <!-- Vinyl grooves -->
+          <circle cx="250" cy="240" r="185" fill="none" stroke="#151515" stroke-width=".5"/>
+          <circle cx="250" cy="240" r="170" fill="none" stroke="#141414" stroke-width=".5"/>
+          <circle cx="250" cy="240" r="155" fill="none" stroke="#151515" stroke-width=".5"/>
+          <circle cx="250" cy="240" r="140" fill="none" stroke="#141414" stroke-width=".5"/>
+          <circle cx="250" cy="240" r="125" fill="none" stroke="#151515" stroke-width=".5"/>
+          <circle cx="250" cy="240" r="110" fill="none" stroke="#141414" stroke-width=".5"/>
+          <circle cx="250" cy="240" r="95" fill="none" stroke="#151515" stroke-width=".5"/>
+          <circle cx="250" cy="240" r="80" fill="none" stroke="#141414" stroke-width=".5"/>
+
+          <!-- Center label area -->
+          <circle cx="250" cy="240" r="65" fill="#0e0e12"/>
+
+          <!-- Red neon ring accent -->
+          <circle cx="250" cy="240" r="68" fill="none" stroke="#ff1a1a" stroke-width="2" filter="url(#ng1)" opacity=".5"/>
+
+          <!-- Gold ornate border on the label -->
+          <circle cx="250" cy="240" r="58" fill="none" stroke="#f0c040" stroke-width="1.5" filter="url(#ng1)" opacity=".4"/>
+
+          <!-- Scrollwork on label -->
+          <path d="M220,210 Q235,200 250,210 Q265,200 280,210" fill="none" stroke="#f0c040" stroke-width="1" filter="url(#ng1)" opacity=".35"/>
+          <path d="M220,270 Q235,280 250,270 Q265,280 280,270" fill="none" stroke="#f0c040" stroke-width="1" filter="url(#ng1)" opacity=".35"/>
+
+          <!-- Logo text on center label -->
+          <text x="250" y="232" text-anchor="middle" font-family="'Playfair Display',serif" font-weight="900" font-style="italic" font-size="22" fill="none" stroke="#ff1a1a" stroke-width="1" filter="url(#ng1)">Blues</text>
+          <text x="250" y="232" text-anchor="middle" font-family="'Playfair Display',serif" font-weight="900" font-style="italic" font-size="22" fill="#ff3333" opacity=".9">Blues</text>
+
+          <text x="250" y="252" text-anchor="middle" font-family="'Oswald',sans-serif" font-weight="400" font-size="10" letter-spacing="6" fill="none" stroke="#f0c040" stroke-width=".8" filter="url(#ng1)">BURGER</text>
+          <text x="250" y="252" text-anchor="middle" font-family="'Oswald',sans-serif" font-weight="400" font-size="10" letter-spacing="6" fill="#f0c040" opacity=".85">BURGER</text>
+
+          <!-- "Old North TLV" in blue neon -->
+          <text x="250" y="268" text-anchor="middle" font-family="'Oswald',sans-serif" font-weight="200" font-size="6" letter-spacing="4" fill="#4fc3f7" filter="url(#ng1)" opacity=".6">OLD NORTH TLV</text>
+
+          <!-- Center hole -->
+          <circle cx="250" cy="240" r="8" fill="#050508" stroke="#222" stroke-width="1"/>
+
+          <!-- Light reflection on vinyl -->
+          <ellipse cx="200" cy="180" rx="80" ry="30" fill="rgba(255,255,255,0.01)" transform="rotate(-30,200,180)"/>
+        </g>
+
+        <!-- Highlight text -->
+        <text x="250" y="470" text-anchor="middle" font-family="'Oswald',sans-serif" font-weight="200" font-size="8" letter-spacing="6" fill="var(--ng)" opacity=".3">VINYL BURGER BOX</text>
+      </svg>
+    </div>
+    <div class="ptx">
+      <h3>The Vinyl <em>Burger Box</em></h3>
+      <p>Every burger ships in a custom round box shaped like a 12-inch vinyl record. Matte black exterior with embossed grooves you can feel. The center label carries the Blues Burger logo in red and gold neon print. Pop the lid and there's your burger, wrapped in wax paper with the BB stamp, sitting in a custom-fit cardboard cradle. The box is rigid enough to reuse — customers keep them as decoration, coasters, or wall art. Every delivery is an unboxing moment.</p>
+      <div class="callout"><strong>Cost estimate:</strong> ₪3.5–5 per unit at 5,000+ MOQ. Round corrugated cardboard with matte laminate + spot UV on the label. Food-safe wax paper interior liner.</div>
+      <div class="tags">
+        <span class="tag">12-Inch Vinyl Shape</span>
+        <span class="tag">Embossed Grooves</span>
+        <span class="tag">Neon Print Label</span>
+        <span class="tag">Reusable as Décor</span>
+        <span class="tag">Food-Safe Liner</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="gl"></div>
+
+<!-- ======== 2. FRIES AMP BOX ======== -->
+<section class="sec s1">
+  <div class="product flip rv">
+    <div class="pscene">
+      <svg viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="sh2"><feDropShadow dx="3" dy="6" stdDeviation="10" flood-color="#000" flood-opacity=".35"/></filter>
+        </defs>
+
+        <ellipse cx="250" cy="440" rx="140" ry="15" fill="rgba(0,0,0,.25)"/>
+
+        <!-- === AMP-SHAPED FRIES BOX === -->
+        <g filter="url(#sh2)">
+          <!-- Amp body -->
+          <rect x="110" y="100" width="280" height="300" rx="8" fill="#1a1a1a" stroke="#2a2a2a" stroke-width="2"/>
+
+          <!-- Top panel with "controls" -->
+          <rect x="120" y="108" width="260" height="50" rx="4" fill="#111"/>
+
+          <!-- Control knobs -->
+          <circle cx="160" cy="133" r="10" fill="#222" stroke="#444" stroke-width="1.5"/>
+          <circle cx="160" cy="133" r="3" fill="#333"/>
+          <line x1="160" y1="125" x2="160" y2="130" stroke="#888" stroke-width="1"/>
+
+          <circle cx="210" cy="133" r="10" fill="#222" stroke="#444" stroke-width="1.5"/>
+          <circle cx="210" cy="133" r="3" fill="#333"/>
+          <line x1="215" y1="126" x2="213" y2="131" stroke="#888" stroke-width="1"/>
+
+          <circle cx="260" cy="133" r="10" fill="#222" stroke="#444" stroke-width="1.5"/>
+          <circle cx="260" cy="133" r="3" fill="#333"/>
+          <line x1="260" y1="125" x2="260" y2="130" stroke="#888" stroke-width="1"/>
+
+          <!-- Knob labels -->
+          <text x="160" y="152" text-anchor="middle" font-family="'Oswald',sans-serif" font-size="5" font-weight="300" fill="#555" letter-spacing="1">VOLUME</text>
+          <text x="210" y="152" text-anchor="middle" font-family="'Oswald',sans-serif" font-size="5" font-weight="300" fill="#555" letter-spacing="1">TONE</text>
+          <text x="260" y="152" text-anchor="middle" font-family="'Oswald',sans-serif" font-size="5" font-weight="300" fill="#555" letter-spacing="1">BLUES</text>
+
+          <!-- Power LED -->
+          <circle cx="340" cy="133" r="4" fill="#ff1a1a" opacity=".7" filter="url(#ng1)">
+            <animate attributeName="opacity" values=".7;.4;.7" dur="2s" repeatCount="indefinite"/>
+          </circle>
+          <text x="340" y="152" text-anchor="middle" font-family="'Oswald',sans-serif" font-size="5" font-weight="300" fill="#555" letter-spacing="1">POWER</text>
+
+          <!-- Speaker grille area -->
+          <rect x="125" y="165" width="250" height="220" rx="4" fill="#0e0e0e"/>
+
+          <!-- Speaker cone -->
+          <circle cx="250" cy="275" r="90" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>
+          <circle cx="250" cy="275" r="75" fill="none" stroke="#181818" stroke-width="1"/>
+          <circle cx="250" cy="275" r="60" fill="none" stroke="#1a1a1a" stroke-width="1"/>
+          <circle cx="250" cy="275" r="45" fill="none" stroke="#181818" stroke-width=".5"/>
+          <circle cx="250" cy="275" r="30" fill="none" stroke="#1a1a1a" stroke-width=".5"/>
+          <circle cx="250" cy="275" r="15" fill="#1a1a1a" stroke="#222" stroke-width="1"/>
+          <circle cx="250" cy="275" r="6" fill="#222"/>
+
+          <!-- Grille cloth texture -->
+          <g opacity=".08">
+            <line x1="125" y1="185" x2="375" y2="185" stroke="white" stroke-width=".5"/>
+            <line x1="125" y1="205" x2="375" y2="205" stroke="white" stroke-width=".5"/>
+            <line x1="125" y1="225" x2="375" y2="225" stroke="white" stroke-width=".5"/>
+            <line x1="125" y1="245" x2="375" y2="245" stroke="white" stroke-width=".5"/>
+            <line x1="125" y1="265" x2="375" y2="265" stroke="white" stroke-width=".5"/>
+            <line x1="125" y1="285" x2="375" y2="285" stroke="white" stroke-width=".5"/>
+            <line x1="125" y1="305" x2="375" y2="305" stroke="white" stroke-width=".5"/>
+            <line x1="125" y1="325" x2="375" y2="325" stroke="white" stroke-width=".5"/>
+            <line x1="125" y1="345" x2="375" y2="345" stroke="white" stroke-width=".5"/>
+            <line x1="125" y1="365" x2="375" y2="365" stroke="white" stroke-width=".5"/>
+          </g>
+
+          <!-- Blues Burger logo on speaker -->
+          <text x="250" y="270" text-anchor="middle" font-family="'Playfair Display',serif" font-weight="900" font-style="italic" font-size="14" fill="#ff1a1a" filter="url(#ng1)" opacity=".4">Blues</text>
+          <text x="250" y="285" text-anchor="middle" font-family="'Oswald',sans-serif" font-weight="400" font-size="7" letter-spacing="4" fill="#f0c040" filter="url(#ng1)" opacity=".35">BURGER</text>
+
+          <!-- Corner screws -->
+          <circle cx="130" cy="110" r="3" fill="#333" stroke="#444" stroke-width=".5"/>
+          <circle cx="370" cy="110" r="3" fill="#333" stroke="#444" stroke-width=".5"/>
+          <circle cx="130" cy="390" r="3" fill="#333" stroke="#444" stroke-width=".5"/>
+          <circle cx="370" cy="390" r="3" fill="#333" stroke="#444" stroke-width=".5"/>
+
+          <!-- Fries sticking out the top -->
+          <g>
+            <rect x="180" y="68" width="8" height="45" rx="2" fill="#e8b830" transform="rotate(-8,184,90)"/>
+            <rect x="200" y="58" width="7" height="52" rx="2" fill="#daa520" transform="rotate(3,203,84)"/>
+            <rect x="220" y="62" width="8" height="48" rx="2" fill="#e8b830" transform="rotate(-5,224,86)"/>
+            <rect x="240" y="55" width="7" height="55" rx="2" fill="#daa520" transform="rotate(6,243,82)"/>
+            <rect x="258" y="60" width="8" height="50" rx="2" fill="#e8b830" transform="rotate(-3,262,85)"/>
+            <rect x="278" y="65" width="7" height="45" rx="2" fill="#daa520" transform="rotate(8,281,87)"/>
+            <rect x="295" y="58" width="8" height="52" rx="2" fill="#e8b830" transform="rotate(-6,299,84)"/>
+            <rect x="313" y="70" width="7" height="40" rx="2" fill="#daa520" transform="rotate(4,316,90)"/>
+          </g>
+        </g>
+
+        <text x="250" y="475" text-anchor="middle" font-family="'Oswald',sans-serif" font-weight="200" font-size="8" letter-spacing="6" fill="var(--ng)" opacity=".3">AMP FRIES BOX</text>
+      </svg>
+    </div>
+    <div class="ptx">
+      <h3>The Amp <em>Fries Box</em></h3>
+      <p>Fries come in a miniature guitar amplifier. The box is a rectangular sleeve printed to look like a Marshall-style tube amp — control knobs (Volume, Tone, Blues), a speaker grille, corner screws, and a red power LED printed on the front. The fries stick out the open top like they're blasting out of the speaker. It's ridiculous. It's unforgettable. It's the thing people photograph and post before they eat a single fry.</p>
+      <div class="callout"><strong>Cost estimate:</strong> ₪1.5–2.5 per unit. Printed card stock sleeve, single fold assembly. Same footprint as a standard fry box — just better looking.</div>
+      <div class="tags">
+        <span class="tag">Amp-Shaped Sleeve</span>
+        <span class="tag">Printed Knobs & Grille</span>
+        <span class="tag">Open-Top for Fries</span>
+        <span class="tag">Instagram-First Design</span>
+        <span class="tag">Flat-Pack Shipping</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="gl"></div>
+
+<!-- ======== 3. ALBUM COVER SLEEVE ======== -->
+<section class="sec s2">
+  <div class="product rv">
+    <div class="pscene">
+      <svg viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="sh3"><feDropShadow dx="4" dy="8" stdDeviation="10" flood-color="#000" flood-opacity=".35"/></filter>
+          <linearGradient id="alb" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#1a0808"/><stop offset="50%" stop-color="#0e0e18"/><stop offset="100%" stop-color="#0a0510"/></linearGradient>
+        </defs>
+
+        <ellipse cx="250" cy="445" rx="160" ry="15" fill="rgba(0,0,0,.25)"/>
+
+        <!-- === ALBUM COVER SLEEVE === -->
+        <g filter="url(#sh3)">
+          <!-- Outer sleeve -->
+          <rect x="90" y="70" width="320" height="320" rx="3" fill="url(#alb)" stroke="#2a2a2a" stroke-width="1.5"/>
+
+          <!-- Subtle texture -->
+          <rect x="90" y="70" width="320" height="320" rx="3" fill="rgba(255,255,255,0.01)"/>
+
+          <!-- === ALBUM ART === -->
+          <!-- Ornate gold border — Golden Nugget style -->
+          <rect x="110" y="90" width="280" height="280" rx="6" fill="none" stroke="#f0c040" stroke-width="2" filter="url(#ng1)" opacity=".5"/>
+          <rect x="118" y="98" width="264" height="264" rx="4" fill="none" stroke="#f0c040" stroke-width="1" filter="url(#ng1)" opacity=".3"/>
+
+          <!-- Corner scrollwork -->
+          <path d="M120,100 Q115,95 120,90" stroke="#f0c040" stroke-width="1.5" filter="url(#ng1)" opacity=".4" fill="none"/>
+          <path d="M380,100 Q385,95 380,90" stroke="#f0c040" stroke-width="1.5" filter="url(#ng1)" opacity=".4" fill="none"/>
+          <path d="M120,360 Q115,365 120,370" stroke="#f0c040" stroke-width="1.5" filter="url(#ng1)" opacity=".4" fill="none"/>
+          <path d="M380,360 Q385,365 380,370" stroke="#f0c040" stroke-width="1.5" filter="url(#ng1)" opacity=".4" fill="none"/>
+
+          <!-- Top scrollwork -->
+          <path d="M200,90 Q220,78 250,78 Q280,78 300,90" fill="none" stroke="#f0c040" stroke-width="1.5" filter="url(#ng1)" opacity=".4"/>
+          <circle cx="250" cy="78" r="3" fill="#f0c040" filter="url(#ng1)" opacity=".35"/>
+
+          <!-- Album title — "Blues" -->
+          <text x="250" y="195" text-anchor="middle" font-family="'Playfair Display',serif" font-weight="900" font-style="italic" font-size="52" fill="none" stroke="#ff1a1a" stroke-width="1.5" filter="url(#ng2)">Blues</text>
+          <text x="250" y="195" text-anchor="middle" font-family="'Playfair Display',serif" font-weight="900" font-style="italic" font-size="52" fill="#ff3333" opacity=".9">Blues</text>
+
+          <!-- "BURGER" -->
+          <text x="250" y="230" text-anchor="middle" font-family="'Oswald',sans-serif" font-weight="400" font-size="18" letter-spacing="12" fill="none" stroke="#f0c040" stroke-width="1" filter="url(#ng1)">BURGER</text>
+          <text x="250" y="230" text-anchor="middle" font-family="'Oswald',sans-serif" font-weight="400" font-size="18" letter-spacing="12" fill="#f0c040" opacity=".85">BURGER</text>
+
+          <!-- Subtitle -->
+          <text x="250" y="260" text-anchor="middle" font-family="'Cormorant Garamond',serif" font-style="italic" font-size="11" fill="#4fc3f7" filter="url(#ng1)" opacity=".5">The Old North Sessions</text>
+
+          <!-- Decorative line -->
+          <line x1="180" y1="272" x2="320" y2="272" stroke="#f0c040" stroke-width="1" filter="url(#ng1)" opacity=".25"/>
+
+          <!-- Neon guitar silhouette -->
+          <g transform="translate(250,310) scale(.5)" filter="url(#ng1)" opacity=".25">
+            <ellipse cx="0" cy="20" rx="20" ry="25" fill="none" stroke="#44ff88" stroke-width="2"/>
+            <ellipse cx="0" cy="-8" rx="14" ry="18" fill="none" stroke="#44ff88" stroke-width="2"/>
+            <line x1="0" y1="-26" x2="0" y2="-60" stroke="#44ff88" stroke-width="2"/>
+            <rect x="-5" y="-68" width="10" height="10" rx="3" fill="none" stroke="#44ff88" stroke-width="1.5"/>
+          </g>
+
+          <!-- === QR CODE AREA (bottom) === -->
+          <rect x="190" y="335" width="45" height="45" rx="2" fill="#111" stroke="#333" stroke-width="1"/>
+          <!-- QR pattern placeholder -->
+          <g fill="#444" opacity=".6">
+            <rect x="195" y="340" width="4" height="4"/><rect x="201" y="340" width="4" height="4"/><rect x="207" y="340" width="4" height="4"/>
+            <rect x="195" y="346" width="4" height="4"/><rect x="213" y="346" width="4" height="4"/><rect x="219" y="346" width="4" height="4"/>
+            <rect x="195" y="352" width="4" height="4"/><rect x="201" y="352" width="4" height="4"/><rect x="207" y="352" width="4" height="4"/>
+            <rect x="219" y="340" width="4" height="4"/><rect x="225" y="340" width="4" height="4"/>
+            <rect x="207" y="358" width="4" height="4"/><rect x="219" y="358" width="4" height="4"/>
+            <rect x="195" y="364" width="4" height="4"/><rect x="207" y="364" width="4" height="4"/><rect x="225" y="364" width="4" height="4"/>
+            <rect x="195" y="370" width="4" height="4"/><rect x="201" y="370" width="4" height="4"/><rect x="213" y="370" width="4" height="4"/><rect x="225" y="370" width="4" height="4"/>
+          </g>
+
+          <text x="280" y="353" font-family="'Oswald',sans-serif" font-weight="200" font-size="7" letter-spacing="2" fill="#888">SCAN FOR</text>
+          <text x="280" y="365" font-family="'Oswald',sans-serif" font-weight="400" font-size="8" letter-spacing="3" fill="#ff1a1a" filter="url(#ng1)" opacity=".7">PLAYLIST</text>
+          <text x="280" y="378" font-family="'Cormorant Garamond',serif" font-style="italic" font-size="7" fill="#4fc3f7" opacity=".4">Blues at Home · Spotify</text>
+
+          <!-- Spine edge visible -->
+          <rect x="88" y="70" width="4" height="320" rx="1" fill="#1a1a1a" stroke="#222" stroke-width=".5"/>
+        </g>
+
+        <text x="250" y="475" text-anchor="middle" font-family="'Oswald',sans-serif" font-weight="200" font-size="8" letter-spacing="6" fill="var(--ng)" opacity=".3">ALBUM COVER SLEEVE</text>
+      </svg>
+    </div>
+    <div class="ptx">
+      <h3>The Album <em>Cover Sleeve</em></h3>
+      <p>The outer packaging for every takeaway order is a 12-inch album sleeve. The front is designed like a real vinyl album cover — "Blues Burger: The Old North Sessions" — with the ornate gold neon border, red script logo, green neon guitar, and a Spotify QR code. The back has the menu printed as a track listing. Side A: Burgers. Side B: Sides & Shakes. It's a menu, a brand piece, and a Spotify gateway in one. Customers keep these. They frame them. They post them.</p>
+      <div class="callout"><strong>Cost estimate:</strong> ₪2–3.5 per unit. 300gsm art card, matte laminate exterior, spot UV on neon elements. Flat pack, folds around the vinyl burger box.</div>
+      <div class="tags">
+        <span class="tag">12" Album Sleeve</span>
+        <span class="tag">Spotify QR Code</span>
+        <span class="tag">Menu as Track Listing</span>
+        <span class="tag">Ornate Gold Border</span>
+        <span class="tag">Frameable Art</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="gl"></div>
+
+<!-- ======== 4. GUITAR PICK ======== -->
+<section class="sec s1">
+  <div class="product flip rv">
+    <div class="pscene">
+      <svg viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="sh4"><feDropShadow dx="2" dy="4" stdDeviation="8" flood-color="#000" flood-opacity=".4"/></filter>
+          <linearGradient id="pick" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#2a0000"/><stop offset="40%" stop-color="#5c0000"/><stop offset="60%" stop-color="#8b0000"/><stop offset="100%" stop-color="#5c0000"/></linearGradient>
+        </defs>
+
+        <!-- Shadow -->
+        <ellipse cx="250" cy="420" rx="80" ry="12" fill="rgba(0,0,0,.25)"/>
+
+        <!-- === GUITAR PICK — large === -->
+        <g filter="url(#sh4)">
+          <!-- Pick shape -->
+          <path d="M250,100 Q350,160 320,310 Q290,380 250,400 Q210,380 180,310 Q150,160 250,100 Z" fill="url(#pick)" stroke="#ff1a1a" stroke-width="1.5" opacity=".95"/>
+
+          <!-- Inner bevel -->
+          <path d="M250,120 Q335,175 310,305 Q282,368 250,385 Q218,368 190,305 Q165,175 250,120 Z" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+
+          <!-- Texture — subtle grip dots -->
+          <g fill="rgba(255,255,255,0.03)">
+            <circle cx="230" cy="300" r="2"/><circle cx="250" cy="305" r="2"/><circle cx="270" cy="300" r="2"/>
+            <circle cx="240" cy="320" r="2"/><circle cx="260" cy="320" r="2"/>
+            <circle cx="230" cy="340" r="2"/><circle cx="250" cy="340" r="2"/><circle cx="270" cy="340" r="2"/>
+            <circle cx="240" cy="355" r="2"/><circle cx="260" cy="355" r="2"/>
+          </g>
+
+          <!-- Gold neon border on pick -->
+          <path d="M250,140 Q325,190 302,300 Q278,358 250,372 Q222,358 198,300 Q175,190 250,140 Z" fill="none" stroke="#f0c040" stroke-width="1.5" filter="url(#ng1)" opacity=".35"/>
+
+          <!-- Logo on pick -->
+          <text x="250" y="225" text-anchor="middle" font-family="'Playfair Display',serif" font-weight="900" font-style="italic" font-size="30" fill="none" stroke="#ff1a1a" stroke-width="1" filter="url(#ng1)">Blues</text>
+          <text x="250" y="225" text-anchor="middle" font-family="'Playfair Display',serif" font-weight="900" font-style="italic" font-size="30" fill="#ff3333" opacity=".85">Blues</text>
+
+          <text x="250" y="248" text-anchor="middle" font-family="'Oswald',sans-serif" font-weight="400" font-size="11" letter-spacing="6" fill="none" stroke="#f0c040" stroke-width=".8" filter="url(#ng1)">BURGER</text>
+          <text x="250" y="248" text-anchor="middle" font-family="'Oswald',sans-serif" font-weight="400" font-size="11" letter-spacing="6" fill="#f0c040" opacity=".8">BURGER</text>
+
+          <!-- "OLD NORTH TLV" -->
+          <text x="250" y="268" text-anchor="middle" font-family="'Oswald',sans-serif" font-weight="200" font-size="6" letter-spacing="4" fill="#4fc3f7" filter="url(#ng1)" opacity=".5">OLD NORTH TLV</text>
+
+          <!-- Small star accents -->
+          <g filter="url(#ng1)" opacity=".3">
+            <path d="M220,280 L222,286 L228,286 L223,290 L225,296 L220,292 L215,296 L217,290 L212,286 L218,286 Z" fill="#f0c040"/>
+            <path d="M280,280 L282,286 L288,286 L283,290 L285,296 L280,292 L275,296 L277,290 L272,286 L278,286 Z" fill="#f0c040"/>
+          </g>
+
+          <!-- Light reflection -->
+          <ellipse cx="225" cy="170" rx="30" ry="50" fill="rgba(255,255,255,0.02)" transform="rotate(-15,225,170)"/>
+        </g>
+
+        <text x="250" y="465" text-anchor="middle" font-family="'Oswald',sans-serif" font-weight="200" font-size="8" letter-spacing="6" fill="var(--ng)" opacity=".3">BRANDED GUITAR PICK</text>
+      </svg>
+    </div>
+    <div class="ptx">
+      <h3>The <em>Guitar Pick</em></h3>
+      <p>Every care package includes a custom Blues Burger guitar pick. Deep crimson cellulose, printed with the logo in red and gold. It's a 0.73mm medium — actually playable, not a toy. Musicians use them. Non-musicians keep them in their wallet, on their keychain, or stuck to the fridge. It costs almost nothing to produce and it stays with the customer forever. The ultimate tiny brand ambassador.</p>
+      <div class="callout"><strong>Cost estimate:</strong> ₪0.30–0.50 per unit at 10,000+ MOQ. Custom cellulose or Delrin. Full-color UV print both sides. Delivered in a small paper sleeve inside the album cover.</div>
+      <div class="tags">
+        <span class="tag">0.73mm Medium</span>
+        <span class="tag">Actually Playable</span>
+        <span class="tag">Deep Crimson Cellulose</span>
+        <span class="tag">Gold + Red Print</span>
+        <span class="tag">Wallet-Sized Keepsake</span>
+        <span class="tag">₪0.30–0.50 Per Unit</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="gl"></div>
+
+<!-- NUMBERS -->
+<section class="sec s2">
+  <span class="sl rv">The Math</span>
+  <h2 class="sh rv">Per-Order <em>Cost</em></h2>
+  <p class="sh-sub rv">Total packaging cost per care package, at scale.</p>
+  <div class="overview">
+    <div class="ov-item rv"><div class="ov-num">₪3.5</div><div class="ov-lbl">Vinyl Box</div></div>
+    <div class="ov-item rv d1"><div class="ov-num">₪2.0</div><div class="ov-lbl">Amp Fries Box</div></div>
+    <div class="ov-item rv d2"><div class="ov-num">₪2.5</div><div class="ov-lbl">Album Sleeve</div></div>
+    <div class="ov-item rv d3"><div class="ov-num">₪0.40</div><div class="ov-lbl">Guitar Pick</div></div>
+  </div>
+  <p style="text-align:center;margin-top:30px;opacity:.25;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:.9rem">Total: ~₪8.40 per care package · Premium positioning justifies ₪5–8 delivery surcharge</p>
+</section>
+
+<div class="gl"></div>
+
+<!-- CTA -->
+<section class="cta">
+  <h2 class="rv"><span class="c1">Every Order</span><span class="c2">Is a Billboard</span></h2>
+  <p class="rv d1">The care package that keeps marketing long after the burger is gone</p>
+  <div class="btns rv d2">
+    <a class="btn br" href="#">Invest Now</a>
+    <a class="btn bgd" href="#">Full Pitch Deck</a>
+  </div>
+</section>
+
+<footer>
+  <div class="fb">Blues Burger</div>
+  <div class="fd">Packaging Concept · Confidential · 2026</div>
+</footer>
+
+<script>
+const o=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('v')})},{threshold:.1,rootMargin:'0px 0px -30px 0px'});
+document.querySelectorAll('.rv').forEach(el=>o.observe(el));
+</script>
+</body>
+</html>

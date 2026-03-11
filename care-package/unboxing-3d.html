@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blues Burger — 3D Unboxing</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900&family=Oswald:wght@200;300;400;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#050508;color:#f2ece0;font-family:'Oswald',sans-serif;overflow:hidden}
+#C{width:100vw;height:100vh;display:block}
+
+.top{position:fixed;top:20px;left:0;right:0;text-align:center;z-index:10;pointer-events:none}
+.brand{font-family:'Playfair Display',serif;font-weight:900;font-size:.85rem;letter-spacing:8px;text-transform:uppercase;color:#f0c040;text-shadow:0 0 12px rgba(240,192,64,.4)}
+
+.tabs{position:fixed;bottom:25px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:20}
+.tab{padding:11px 22px;font-family:'Oswald',sans-serif;font-weight:300;font-size:.55rem;letter-spacing:3px;text-transform:uppercase;border:1px solid rgba(255,26,26,.1);background:rgba(5,5,8,.9);color:#f2ece0;cursor:pointer;transition:all .3s;opacity:.4}
+.tab:hover,.tab.on{border-color:#ff1a1a;color:#ff1a1a;opacity:1;box-shadow:0 0 15px rgba(255,26,26,.1)}
+
+.lbl{position:fixed;top:50%;right:35px;transform:translateY(-50%);text-align:right;z-index:10;pointer-events:none;transition:opacity .5s}
+.lbl h2{font-family:'Playfair Display',serif;font-weight:900;font-size:2.2rem;color:#ff1a1a;text-shadow:0 0 12px rgba(255,26,26,.2);line-height:1.1}
+.lbl p{font-weight:200;font-size:.5rem;letter-spacing:3px;text-transform:uppercase;color:#f0c040;opacity:.3;margin-top:6px;line-height:1.7}
+
+.obtn{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:30;
+font-family:'Playfair Display',serif;font-weight:900;font-size:1.4rem;letter-spacing:8px;text-transform:uppercase;
+color:#ff1a1a;background:rgba(5,5,8,.92);border:2px solid #ff1a1a;padding:22px 60px;cursor:pointer;
+text-shadow:0 0 10px rgba(255,26,26,.4);box-shadow:0 0 30px rgba(255,26,26,.15);
+backdrop-filter:blur(8px);transition:all .4s;animation:bp 2s ease-in-out infinite alternate}
+.obtn:hover{background:#ff1a1a;color:#fff;box-shadow:0 0 60px rgba(255,26,26,.4);transform:translate(-50%,-50%) scale(1.05)}
+.obtn.hide{opacity:0;pointer-events:none;transform:translate(-50%,-50%) scale(.7)}
+@keyframes bp{0%{box-shadow:0 0 30px rgba(255,26,26,.15)}100%{box-shadow:0 0 50px rgba(255,26,26,.3)}}
+
+.hint{position:fixed;bottom:70px;left:50%;transform:translateX(-50%);font-weight:200;font-size:.4rem;letter-spacing:5px;text-transform:uppercase;opacity:.12;z-index:10;pointer-events:none}
+
+@media(max-width:768px){
+.lbl{right:15px;top:auto;bottom:120px;transform:none;text-align:center;left:15px}
+.lbl h2{font-size:1.5rem}
+.tabs{flex-wrap:wrap;justify-content:center;width:94%}
+.tab{padding:8px 12px;font-size:.48rem}
+.obtn{font-size:1rem;padding:16px 40px}
+}
+</style>
+</head>
+<body>
+<canvas id="C"></canvas>
+<div class="top"><div class="brand">Blues Burger · Care Package</div></div>
+<div class="lbl" id="LBL"><h2 id="LN">Vinyl Burger Box</h2><p id="LD">Click Open to reveal the cheeseburger inside</p></div>
+<button class="obtn" id="OB">Open It</button>
+<div class="tabs">
+<button class="tab on" data-i="0">Vinyl Box</button>
+<button class="tab" data-i="1">Amp Fries</button>
+<button class="tab" data-i="2">Album Sleeve</button>
+<button class="tab" data-i="3">Guitar Pick</button>
+</div>
+<div class="hint">Drag to rotate · Scroll to zoom</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+var canvas=document.getElementById('C');
+var scene=new THREE.Scene();
+var cam=new THREE.PerspectiveCamera(40,innerWidth/innerHeight,0.1,100);
+cam.position.set(0,2.5,7);
+
+var ren=new THREE.WebGLRenderer({canvas:canvas,antialias:true});
+ren.setSize(innerWidth,innerHeight);
+ren.setPixelRatio(Math.min(devicePixelRatio,2));
+ren.toneMapping=THREE.ACESFilmicToneMapping;
+ren.toneMappingExposure=1.5;
+ren.shadowMap.enabled=true;
+
+// LIGHTS
+scene.add(new THREE.AmbientLight(0x111122,0.7));
+var kl=new THREE.PointLight(0xff1a1a,3,20);kl.position.set(4,5,5);kl.castShadow=true;scene.add(kl);
+var fl=new THREE.PointLight(0xf0c040,1.8,15);fl.position.set(-4,4,3);scene.add(fl);
+var rl=new THREE.PointLight(0x4fc3f7,1,12);rl.position.set(0,-2,-5);scene.add(rl);
+var sl=new THREE.SpotLight(0xffffff,0.8,20,Math.PI/4,0.3);sl.position.set(0,10,3);scene.add(sl);
+
+// Ground
+var gnd=new THREE.Mesh(new THREE.PlaneGeometry(30,30),new THREE.MeshStandardMaterial({color:0x050508,roughness:0.9}));
+gnd.rotation.x=-Math.PI/2;gnd.position.y=-2.5;gnd.receiveShadow=true;scene.add(gnd);
+
+// MATERIALS
+var mVinyl=new THREE.MeshStandardMaterial({color:0x080808,roughness:0.2,metalness:0.8});
+var mWall=new THREE.MeshStandardMaterial({color:0x0e0e0e,roughness:0.4,metalness:0.5});
+var mInner=new THREE.MeshStandardMaterial({color:0x1a1a1a,roughness:0.7,side:2}); // BackSide=2
+var mLabel=new THREE.MeshStandardMaterial({color:0x6b0000,roughness:0.35,metalness:0.3,emissive:0xff1a1a,emissiveIntensity:0.1});
+var mNR=new THREE.MeshStandardMaterial({color:0xff1a1a,emissive:0xff1a1a,emissiveIntensity:0.8,roughness:0.1});
+var mNG=new THREE.MeshStandardMaterial({color:0xf0c040,emissive:0xf0c040,emissiveIntensity:0.6,roughness:0.1});
+var mNB=new THREE.MeshStandardMaterial({color:0x4fc3f7,emissive:0x4fc3f7,emissiveIntensity:0.5,roughness:0.1});
+var mChrome=new THREE.MeshStandardMaterial({color:0xbbbbbb,roughness:0.1,metalness:0.95});
+var mAmp=new THREE.MeshStandardMaterial({color:0x151515,roughness:0.55,metalness:0.25});
+var mFry=new THREE.MeshStandardMaterial({color:0xe8c020,roughness:0.6});
+var mAlbum=new THREE.MeshStandardMaterial({color:0x0c0c16,roughness:0.45});
+var mPick=new THREE.MeshStandardMaterial({color:0x7a0000,roughness:0.3,metalness:0.25,emissive:0xff1a1a,emissiveIntensity:0.06});
+var mPaper=new THREE.MeshStandardMaterial({color:0x1a1008,roughness:0.75});
+var mBunT=new THREE.MeshStandardMaterial({color:0xc88030,roughness:0.7});
+var mBunB=new THREE.MeshStandardMaterial({color:0xb06820,roughness:0.75});
+var mPatty=new THREE.MeshStandardMaterial({color:0x2a1508,roughness:0.9});
+var mCheese=new THREE.MeshStandardMaterial({color:0xf0a010,roughness:0.5});
+var mLettuce=new THREE.MeshStandardMaterial({color:0x1a8a10,roughness:0.7});
+var mTomato=new THREE.MeshStandardMaterial({color:0xcc2020,roughness:0.5});
+var mSeed=new THREE.MeshStandardMaterial({color:0xf0e0b0,roughness:0.5});
+var mDark=new THREE.MeshStandardMaterial({color:0x040404});
+var mGroove=new THREE.MeshStandardMaterial({color:0x111111,roughness:0.2,metalness:0.8});
+
+function nR(r,t,m){var g=new THREE.Mesh(new THREE.TorusGeometry(r,t,12,64),m);g.rotation.x=Math.PI/2;return g;}
+function eOB(t){return 1+2.7*Math.pow(t-1,3)+1.7*Math.pow(t-1,2);}
+function eOE(t){if(t===0||t===1)return t;return Math.pow(2,-10*t)*Math.sin((t*10-0.75)*2.094)+1;}
+function eOC(t){return 1-Math.pow(1-t,3);}
+
+var items=[];
+var anims=[];
+var cur=0;
+var clock=new THREE.Clock();
+
+// =========================================
+// 1. VINYL BURGER BOX
+// =========================================
+function mkVinyl(){
+  var root=new THREE.Group();
+
+  // BOX CONTAINER
+  var box=new THREE.Group();
+  // Outer wall
+  var ow=new THREE.Mesh(new THREE.CylinderGeometry(1.8,1.8,1.2,64,1,true),mWall);
+  ow.position.y=0.6;ow.castShadow=true;box.add(ow);
+  // Inner wall
+  var iw=new THREE.Mesh(new THREE.CylinderGeometry(1.72,1.72,1.18,64,1,true),mInner);
+  iw.position.y=0.6;box.add(iw);
+  // Bottom
+  var bd=new THREE.Mesh(new THREE.CylinderGeometry(1.8,1.8,0.08,64),mWall);
+  bd.position.y=0.04;box.add(bd);
+  // Inner floor
+  var ifl=new THREE.Mesh(new THREE.CylinderGeometry(1.71,1.71,0.02,64),new THREE.MeshStandardMaterial({color:0x181818,roughness:0.7}));
+  ifl.position.y=0.1;box.add(ifl);
+  // Rim
+  var rim=nR(1.8,0.035,mChrome);rim.position.y=1.2;box.add(rim);
+  // Neon rings
+  var nr1=nR(1.82,0.012,mNR);nr1.position.y=0.6;box.add(nr1);
+  var nr2=nR(1.82,0.01,mNG);nr2.position.y=0.1;box.add(nr2);
+  box.position.y=-1.8;
+  root.add(box);
+
+  // BURGER — built at origin, will be moved
+  var burger=new THREE.Group();
+
+  // Bottom bun
+  var bb=new THREE.Mesh(new THREE.CylinderGeometry(0.85,0.9,0.2,32),mBunB);
+  bb.position.y=0;burger.add(bb);
+  // Flat top on bottom bun
+  var bbTop=new THREE.Mesh(new THREE.CylinderGeometry(0.85,0.85,0.05,32),mBunB);
+  bbTop.position.y=0.12;burger.add(bbTop);
+
+  // Patty 1
+  var p1=new THREE.Mesh(new THREE.CylinderGeometry(0.82,0.82,0.18,32),mPatty);
+  p1.position.y=0.24;p1.castShadow=true;burger.add(p1);
+
+  // Cheese — big visible slab
+  var ch=new THREE.Mesh(new THREE.BoxGeometry(1.15,0.05,1.15),mCheese);
+  ch.position.y=0.38;ch.rotation.y=0.4;burger.add(ch);
+  // Cheese droop
+  var dg=new THREE.BoxGeometry(0.15,0.18,0.05);
+  [[0.55,0.32,0.4],[-0.5,0.32,-0.45],[0.4,0.32,-0.5],[-0.55,0.32,0.35]].forEach(function(p){
+    var d=new THREE.Mesh(dg,mCheese);d.position.set(p[0],p[1],p[2]);burger.add(d);
+  });
+
+  // Patty 2
+  var p2=new THREE.Mesh(new THREE.CylinderGeometry(0.8,0.8,0.18,32),mPatty);
+  p2.position.y=0.48;burger.add(p2);
+
+  // Lettuce — wider than patty, sticks out
+  var let1=new THREE.Mesh(new THREE.CylinderGeometry(0.9,0.95,0.05,20),mLettuce);
+  let1.position.y=0.62;burger.add(let1);
+
+  // Tomato
+  var tom=new THREE.Mesh(new THREE.CylinderGeometry(0.35,0.35,0.06,16),mTomato);
+  tom.position.set(0.18,0.68,0.12);burger.add(tom);
+  var tom2=new THREE.Mesh(new THREE.CylinderGeometry(0.3,0.3,0.06,16),mTomato);
+  tom2.position.set(-0.2,0.68,-0.15);burger.add(tom2);
+
+  // Top bun — dome
+  var tbBase=new THREE.Mesh(new THREE.CylinderGeometry(0.88,0.88,0.1,32),mBunT);
+  tbBase.position.y=0.76;burger.add(tbBase);
+  var tbDome=new THREE.Mesh(new THREE.SphereGeometry(0.88,32,16,0,Math.PI*2,0,Math.PI*0.45),mBunT);
+  tbDome.scale.y=0.5;tbDome.position.y=0.82;tbDome.castShadow=true;burger.add(tbDome);
+
+  // Sesame seeds — big and visible
+  var sg=new THREE.SphereGeometry(0.035,6,6);
+  [[-0.2,1.02,0.35],[0.25,1.05,0.28],[0,1.08,-0.25],[-0.35,0.98,-0.12],[0.15,1.03,-0.35],[0.38,0.96,0.1],[-0.1,1.06,0.15],[0.28,0.99,-0.22],[-0.3,1.01,0.25],[0.1,1.07,0],[0.4,0.94,-.15]].forEach(function(p){
+    var s=new THREE.Mesh(sg,mSeed);s.position.set(p[0],p[1],p[2]);burger.add(s);
+  });
+
+  burger.scale.set(1.0,1.0,1.0);
+  burger.position.y=-3; // WAY below, hidden in box
+  burger.visible=false;
+  root.add(burger);
+
+  // LID
+  var lid=new THREE.Group();
+  var ld=new THREE.Mesh(new THREE.CylinderGeometry(1.78,1.78,0.12,64),mVinyl);
+  ld.castShadow=true;lid.add(ld);
+  // Grooves
+  for(var i=0;i<10;i++){
+    var gr=nR(0.5+i*0.13,0.003,mGroove);gr.position.y=0.065;lid.add(gr);
+  }
+  // Label
+  var lab=new THREE.Mesh(new THREE.CylinderGeometry(0.45,0.45,0.13,64),mLabel);lid.add(lab);
+  // Gold ring
+  var lgr=nR(0.47,0.014,mNG);lgr.position.y=0.065;lid.add(lgr);
+  // Red ring
+  var lrr=nR(0.54,0.01,mNR);lrr.position.y=0.065;lid.add(lrr);
+  // Outer neon
+  var lor=nR(1.78,0.012,mNR);lor.position.y=0.065;lid.add(lor);
+  // Mid gold
+  var lmg=nR(1.05,0.008,mNG);lmg.position.y=0.065;lid.add(lmg);
+  // Hole
+  var lh=new THREE.Mesh(new THREE.CylinderGeometry(0.06,0.06,0.14,16),mDark);lid.add(lh);
+  // Lip
+  var lip=new THREE.Mesh(new THREE.TorusGeometry(1.78,0.04,8,64),mWall);lip.rotation.x=Math.PI/2;lip.position.y=-0.06;lid.add(lip);
+
+  lid.position.y=-0.55;
+  root.add(lid);
+  root.rotation.x=0.1;
+
+  anims.push({type:'vinyl',lid:lid,burger:burger,phase:'closed',t:0});
+  return root;
+}
+
+// =========================================
+// 2. AMP FRIES
+// =========================================
+function mkAmp(){
+  var root=new THREE.Group();
+  var body=new THREE.Mesh(new THREE.BoxGeometry(2.2,2.8,1.4),mAmp);body.castShadow=true;root.add(body);
+
+  // Top panel
+  root.add(new THREE.Mesh(new THREE.BoxGeometry(2,0.08,1.2),new THREE.MeshStandardMaterial({color:0x111})).translateY(1.32));
+
+  // Grille
+  root.add(new THREE.Mesh(new THREE.BoxGeometry(1.9,1.8,0.04),new THREE.MeshStandardMaterial({color:0x0e0e0e,roughness:0.85})).translateZ(0.68).translateY(-0.15));
+
+  // Speaker rings
+  [0.6,0.42,0.24].forEach(function(r){
+    var sp=new THREE.Mesh(new THREE.TorusGeometry(r,r>0.3?0.028:0.018,8,32),mChrome);
+    sp.position.set(0,-0.15,0.72);root.add(sp);
+  });
+
+  // Knobs
+  [-0.55,0,0.55].forEach(function(x){
+    var k=new THREE.Mesh(new THREE.CylinderGeometry(0.09,0.09,0.06,20),mChrome);
+    k.rotation.x=Math.PI/2;k.position.set(x,1.05,0.72);root.add(k);
+  });
+
+  // LED
+  var led=new THREE.Mesh(new THREE.SphereGeometry(0.04,8,8),mNR);led.position.set(0.85,1.05,0.72);root.add(led);
+
+  // Handle
+  var hg=new THREE.TorusGeometry(0.35,0.03,8,16,Math.PI);
+  var h=new THREE.Mesh(hg,mChrome);h.position.set(0,1.45,0);h.rotation.z=Math.PI;root.add(h);
+
+  // FRIES — start INSIDE the box, hidden
+  var fries=[];
+  for(var i=0;i<18;i++){
+    var fh=0.4+Math.random()*0.6;
+    var fw=0.08+Math.random()*0.03;
+    var fm=new THREE.Mesh(new THREE.BoxGeometry(fw,fh,fw),mFry);
+    var fx=-0.6+Math.random()*1.2;
+    var fz=-0.35+Math.random()*0.7;
+    fm.position.set(fx,0,fz); // start at center Y
+    fm.rotation.z=(Math.random()-0.5)*0.1;
+    fm.castShadow=true;
+    fm.visible=false; // hidden until open
+    root.add(fm);
+    fries.push({
+      mesh:fm,
+      targetY:1.6+Math.random()*1.2,
+      rz:(Math.random()-0.5)*0.6,
+      rx:(Math.random()-0.5)*0.4,
+      delay:i*0.02
+    });
+  }
+
+  root.rotation.x=0.08;
+  anims.push({type:'amp',fries:fries,phase:'closed',t:0});
+  return root;
+}
+
+// =========================================
+// 3. ALBUM SLEEVE
+// =========================================
+function mkAlbum(){
+  var root=new THREE.Group();
+
+  // Back sleeve
+  var back=new THREE.Mesh(new THREE.BoxGeometry(3,3,0.06),mAlbum);back.castShadow=true;root.add(back);
+
+  // Gold edges
+  var eg=function(w,h,x,y){root.add(new THREE.Mesh(new THREE.BoxGeometry(w,h,0.07),mNG).translateX(x).translateY(y).translateZ(0.035));};
+  eg(2.8,0.02,0,1.4);eg(2.8,0.02,0,-1.4);eg(0.02,2.8,-1.4,0);eg(0.02,2.8,1.4,0);
+
+  // Spine
+  root.add(new THREE.Mesh(new THREE.BoxGeometry(0.12,3,0.08),new THREE.MeshStandardMaterial({color:0x0e0e0e})).translateX(-1.56));
+  root.add(new THREE.Mesh(new THREE.BoxGeometry(0.015,2.6,0.005),mNR).translateX(-1.56).translateZ(0.045));
+
+  // Front cover
+  var front=new THREE.Group();
+  var fc=new THREE.Mesh(new THREE.BoxGeometry(3,3,0.06),new THREE.MeshStandardMaterial({color:0x0a0a14,roughness:0.4}));
+  fc.castShadow=true;front.add(fc);
+
+  // Front gold frame
+  var fgm=new THREE.MeshStandardMaterial({color:0xf0c040,emissive:0xf0c040,emissiveIntensity:0.35,roughness:0.12});
+  var fe=function(w,h,x,y){front.add(new THREE.Mesh(new THREE.BoxGeometry(w,h,0.06),fgm).translateX(x).translateY(y).translateZ(0.035));};
+  fe(2.7,0.02,0,1.3);fe(2.7,0.02,0,-1.3);fe(0.02,2.7,-1.3,0);fe(0.02,2.7,1.3,0);
+
+  // QR — big white square with dark blocks
+  var qrBg=new THREE.Mesh(new THREE.BoxGeometry(0.6,0.6,0.006),new THREE.MeshStandardMaterial({color:0xf0f0f0}));
+  qrBg.position.set(0.55,-0.85,0.035);front.add(qrBg);
+  var qb=new THREE.BoxGeometry(0.06,0.06,0.008);
+  var qm=new THREE.MeshStandardMaterial({color:0x111111});
+  [[-0.22,0.22],[-0.16,0.22],[-0.1,0.22],[-0.22,0.16],[-0.1,0.16],[-0.22,0.1],[-0.16,0.1],[-0.1,0.1],
+  [0.1,0.22],[0.16,0.22],[0.22,0.22],[0.1,0.16],[0.22,0.16],[0.1,0.1],[0.16,0.1],[0.22,0.1],
+  [-0.22,-0.1],[-0.16,-0.1],[-0.1,-0.1],[-0.22,-0.16],[-0.1,-0.16],[-0.22,-0.22],[-0.16,-0.22],[-0.1,-0.22],
+  [0,0.04],[0.06,0],[0.12,0.06],[-0.06,0],[0,0],[0.18,-0.06],[0.06,-0.12],[0,-0.18],[0.12,-0.1],[0.22,-0.1],[0.18,-0.16],[0.22,-0.22]
+  ].forEach(function(p){front.add(new THREE.Mesh(qb,qm).translateX(0.55+p[0]).translateY(-0.85+p[1]).translateZ(0.04));});
+
+  // Scan text bar
+  front.add(new THREE.Mesh(new THREE.BoxGeometry(0.65,0.04,0.005),mNR).translateX(0.55).translateY(-1.22).translateZ(0.035));
+
+  front.position.z=0.07;
+  root.add(front);
+
+  // Vinyl record
+  var vinyl=new THREE.Group();
+  var vd=new THREE.Mesh(new THREE.CylinderGeometry(1.35,1.35,0.04,64),mVinyl);
+  vd.rotation.x=Math.PI/2;vinyl.add(vd);
+  for(var i=0;i<8;i++){
+    var vgr=new THREE.Mesh(new THREE.TorusGeometry(0.3+i*0.14,0.002,6,64),mGroove);
+    vgr.position.z=0.025;vinyl.add(vgr);
+  }
+  var vlab=new THREE.Mesh(new THREE.CylinderGeometry(0.22,0.22,0.045,32),mLabel);
+  vlab.rotation.x=Math.PI/2;vinyl.add(vlab);
+  vinyl.add(new THREE.Mesh(new THREE.TorusGeometry(0.23,0.008,8,32),mNG).translateZ(0.025));
+  vinyl.add(new THREE.Mesh(new THREE.TorusGeometry(1.35,0.012,8,64),mNR).translateZ(0.025));
+
+  vinyl.position.z=0.04;vinyl.visible=false;
+  root.add(vinyl);
+
+  root.rotation.y=0.2;
+  anims.push({type:'album',front:front,vinyl:vinyl,vDisc:vd,phase:'closed',t:0});
+  return root;
+}
+
+// =========================================
+// 4. GUITAR PICK
+// =========================================
+function mkPick(){
+  var root=new THREE.Group();
+
+  // Sleeve
+  var sleeve=new THREE.Group();
+  var slBg=new THREE.Mesh(new THREE.BoxGeometry(2,2.8,0.05),mPaper);slBg.castShadow=true;sleeve.add(slBg);
+  // Gold border
+  var sgm=mNG.clone();
+  var se=function(w,h,x,y){sleeve.add(new THREE.Mesh(new THREE.BoxGeometry(w,h,0.055),sgm).translateX(x).translateY(y).translateZ(0.03));};
+  se(1.8,0.012,0,1.3);se(1.8,0.012,0,-1.3);se(0.012,2.6,-0.9,0);se(0.012,2.6,0.9,0);
+  // Title bars
+  sleeve.add(new THREE.Mesh(new THREE.BoxGeometry(0.8,0.06,0.004),mNR).translateY(0.5).translateZ(0.03));
+  sleeve.add(new THREE.Mesh(new THREE.BoxGeometry(0.55,0.04,0.004),sgm).translateY(0.38).translateZ(0.03));
+  sleeve.add(new THREE.Mesh(new THREE.BoxGeometry(0.35,0.03,0.004),mNB).translateY(0.28).translateZ(0.03));
+  root.add(sleeve);
+
+  // Pick
+  var pickG=new THREE.Group();
+  var shape=new THREE.Shape();
+  shape.moveTo(0,1.1);
+  shape.bezierCurveTo(0.85,0.5,0.9,-0.45,0.55,-1.1);
+  shape.bezierCurveTo(0.28,-1.45,-0.28,-1.45,-0.55,-1.1);
+  shape.bezierCurveTo(-0.9,-0.45,-0.85,0.5,0,1.1);
+  var pGeo=new THREE.ExtrudeGeometry(shape,{depth:0.12,bevelEnabled:true,bevelThickness:0.03,bevelSize:0.03,bevelSegments:4});
+  var pick=new THREE.Mesh(pGeo,mPick);pick.castShadow=true;pickG.add(pick);
+
+  // Gold border tube
+  var bPts=[];
+  for(var i=0;i<=80;i++){var ang=(i/80)*Math.PI*2;var r=0.72+0.22*Math.cos(ang*1.5);bPts.push(new THREE.Vector3(Math.sin(ang)*r*0.75,Math.cos(ang)*r*0.95+0.02,0.09));}
+  var bCurve=new THREE.CatmullRomCurve3(bPts,true);
+  pickG.add(new THREE.Mesh(new THREE.TubeGeometry(bCurve,80,0.014,8,true),mNG));
+
+  // Grip dots
+  var dg=new THREE.SphereGeometry(0.03,8,8);
+  [[-0.2,-0.55],[0,-0.65],[0.2,-0.55],[-0.1,-0.8],[0.1,-0.8],[0,-1]].forEach(function(p){
+    pickG.add(new THREE.Mesh(dg,mNR).translateX(p[0]).translateY(p[1]).translateZ(0.09));
+  });
+
+  pickG.visible=false;pickG.scale.setScalar(0.01);
+  root.add(pickG);
+
+  root.scale.set(1.3,1.3,1.3);root.rotation.x=0.1;
+  anims.push({type:'pick',sleeve:sleeve,slBg:slBg,sgm:sgm,pickG:pickG,phase:'closed',t:0});
+  return root;
+}
+
+// BUILD
+items.push(mkVinyl(),mkAmp(),mkAlbum(),mkPick());
+items.forEach(function(g){g.visible=false;scene.add(g);});
+items[0].visible=true;
+
+// BUTTON
+var OB=document.getElementById('OB');
+function showBtn(){OB.classList.remove('hide');}
+function hideBtn(){OB.classList.add('hide');}
+
+OB.addEventListener('click',function(){
+  var a=anims[cur];
+  if(a.phase!=='closed')return;
+  a.phase='opening';a.t=0;
+  // Make fries visible on amp
+  if(a.type==='amp'){a.fries.forEach(function(f){f.mesh.visible=true;});}
+  hideBtn();
+});
+
+// DATA
+var D=[
+  {name:'Vinyl Burger Box',desc:'Click Open · Lid lifts · Cheeseburger rises'},
+  {name:'Amp Fries Box',desc:'Click Open · Fries blast out the speaker'},
+  {name:'Album Sleeve',desc:'Click Open · Cover slides · Vinyl record + QR'},
+  {name:'Guitar Pick',desc:'Click Open · Pick spins out of sleeve'},
+];
+
+// TABS
+var LN=document.getElementById('LN'),LD=document.getElementById('LD'),LBL=document.getElementById('LBL');
+var tabs=document.querySelectorAll('.tab');
+
+function switchTo(idx){
+  if(idx===cur)return;
+  LBL.style.opacity='0';hideBtn();
+  setTimeout(function(){
+    items[cur].visible=false;cur=idx;items[cur].visible=true;
+    LN.textContent=D[idx].name;LD.textContent=D[idx].desc;
+    if(anims[cur].phase==='closed')setTimeout(showBtn,300);
+    setTimeout(function(){LBL.style.opacity='1';},150);
+  },250);
+  tabs.forEach(function(t){t.classList.remove('on');});tabs[idx].classList.add('on');
+}
+tabs.forEach(function(t){t.addEventListener('click',function(){switchTo(+t.dataset.i);});});
+setTimeout(function(){LBL.style.opacity='1';},500);
+
+// ORBIT
+var drag=false,pm={x:0,y:0},rt={x:0.1,y:0},rc={x:0.1,y:0},zt=7,zc=7;
+canvas.addEventListener('pointerdown',function(e){drag=true;pm={x:e.clientX,y:e.clientY};});
+canvas.addEventListener('pointermove',function(e){if(!drag)return;rt.y+=(e.clientX-pm.x)*0.004;rt.x+=(e.clientY-pm.y)*0.004;rt.x=Math.max(-0.8,Math.min(0.8,rt.x));pm={x:e.clientX,y:e.clientY};});
+canvas.addEventListener('pointerup',function(){drag=false;});
+canvas.addEventListener('pointerleave',function(){drag=false;});
+canvas.addEventListener('wheel',function(e){zt+=e.deltaY*0.003;zt=Math.max(3.5,Math.min(10,zt));},{passive:true});
+
+// RENDER
+var elapsed=0;
+function loop(){
+  requestAnimationFrame(loop);
+  var dt=Math.min(clock.getDelta(),0.05);
+  elapsed+=dt;
+  var t=elapsed;
+
+  rc.x+=(rt.x-rc.x)*0.06;rc.y+=(rt.y-rc.y)*0.06;zc+=(zt-zc)*0.06;
+  if(!drag)rt.y+=0.0015;
+  var g=items[cur];g.rotation.y=rc.y;g.rotation.x=rc.x;
+  g.position.y=Math.sin(t*0.6)*0.04;
+  cam.position.set(0,1.8,zc);cam.lookAt(0,0,0);
+  kl.intensity=3+Math.sin(t*1.3)*0.5;fl.intensity=1.8+Math.sin(t+1)*0.3;
+
+  // ---- VINYL ----
+  var a0=anims[0];
+  if(a0.phase==='opening'){
+    a0.t=Math.min(a0.t+dt*0.45,1);
+    var p=eOB(a0.t);
+    // Lid goes UP high
+    a0.lid.position.y=-0.55+p*3.5;
+    a0.lid.rotation.z=p*0.15;
+
+    // Burger appears and rises
+    if(a0.t>0.15){
+      a0.burger.visible=true;
+      var bp=eOE(Math.min((a0.t-0.15)/0.85,1));
+      // Rise from inside box (-1.8) up to above box (0.2)
+      a0.burger.position.y=-1.8+bp*2.3;
+      a0.burger.rotation.y=bp*0.5;
+    }
+    if(a0.t>=1)a0.phase='done';
+  }
+  if(a0.phase==='done'){
+    a0.burger.rotation.y+=dt*0.3;
+    a0.lid.position.y=2.95+Math.sin(t*0.4)*0.08;
+  }
+
+  // ---- AMP ----
+  var a1=anims[1];
+  if(a1.phase==='opening'){
+    a1.t=Math.min(a1.t+dt*0.4,1);
+    a1.fries.forEach(function(f){
+      var ft=Math.max(0,Math.min((a1.t-f.delay)/0.55,1));
+      var ep=eOE(ft);
+      f.mesh.position.y=ep*f.targetY;
+      f.mesh.rotation.z=f.rz*ep;
+      f.mesh.rotation.x=f.rx*ep;
+    });
+    if(a1.t>=1)a1.phase='done';
+  }
+  if(a1.phase==='done'){
+    a1.fries.forEach(function(f,i){
+      f.mesh.position.y=f.targetY+Math.sin(t*1.5+i*0.4)*0.025;
+    });
+  }
+
+  // ---- ALBUM ----
+  var a2=anims[2];
+  if(a2.phase==='opening'){
+    a2.t=Math.min(a2.t+dt*0.38,1);
+    var sp=eOC(a2.t);
+    a2.front.position.x=sp*2.5;
+    a2.front.position.z=0.07+sp*0.25;
+    a2.front.rotation.y=sp*-0.12;
+
+    if(a2.t>0.15&&!a2.vinyl.visible)a2.vinyl.visible=true;
+    if(a2.vinyl.visible){
+      var vp=eOB(Math.min((a2.t-0.15)/0.85,1));
+      a2.vinyl.position.x=-0.1+vp*1.6;
+      a2.vinyl.rotation.z=vp*0.2;
+    }
+    if(a2.t>=1)a2.phase='done';
+  }
+  if(a2.phase==='done'){
+    a2.vDisc.rotation.y+=dt*2;
+  }
+
+  // ---- PICK ----
+  var a3=anims[3];
+  if(a3.phase==='opening'){
+    a3.t=Math.min(a3.t+dt*0.4,1);
+    var sp2=eOC(a3.t);
+    a3.sleeve.position.y=-sp2*2.5;
+    a3.slBg.material.transparent=true;
+    a3.slBg.material.opacity=1-sp2*0.8;
+    a3.sgm.transparent=true;
+    a3.sgm.opacity=1-sp2*0.8;
+
+    if(a3.t>0.08&&!a3.pickG.visible)a3.pickG.visible=true;
+    if(a3.pickG.visible){
+      var pp=eOB(Math.min((a3.t-0.08)/0.92,1));
+      a3.pickG.scale.setScalar(0.01+pp*0.99);
+      a3.pickG.position.y=pp*1.0;
+      a3.pickG.rotation.y=pp*Math.PI*3;
+      a3.pickG.rotation.z=pp*0.2;
+    }
+    if(a3.t>=1)a3.phase='done';
+  }
+  if(a3.phase==='done'){
+    a3.pickG.rotation.y+=dt*0.4;
+  }
+
+  ren.render(scene,cam);
+}
+loop();
+
+window.addEventListener('resize',function(){cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix();ren.setSize(innerWidth,innerHeight);});
+</script>
+</body>
+</html>

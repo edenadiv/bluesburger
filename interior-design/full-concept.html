@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blues Burger — Interior Design Concept</title>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Oswald:wght@200;300;400;500;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --red:#ff1a1a;--rg:rgba(255,26,26,0.7);--rd:#8b0000;--rd2:#5c0000;
+  --neon-blue:#4fc3f7;--nb-g:rgba(79,195,247,0.5);
+  --b1:#080d16;--b2:#0d1b2a;
+  --gold:#f0c040;--gl:#ffe082;--cream:#fdf6e3;--cream2:#e8dcc0;
+  --brick:#3a2418;--brick2:#4d3020;--mortar:#1e140e;
+  --wood:#1e0f06;--wood2:#2e1a0c;--wood3:#402510;
+  --leather:#6b1a00;--leather2:#8b2800;--leather3:#4a1200;
+  --chrome:#b0b0b0;--chrome2:#787878;--chrome3:#d0d0d0;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--b1);color:var(--cream);font-family:'Oswald',sans-serif;overflow-x:hidden}
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");pointer-events:none;z-index:10000}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:999;padding:16px 40px;background:linear-gradient(180deg,rgba(8,13,22,.97) 60%,transparent);display:flex;justify-content:space-between;align-items:center}
+.n-brand{font-family:'Bangers',cursive;font-size:1rem;letter-spacing:5px;color:var(--red);text-shadow:0 0 12px var(--rg)}
+.n-links{display:flex;gap:30px}
+.n-links a{font-size:.6rem;font-weight:300;letter-spacing:3px;text-transform:uppercase;color:var(--cream);text-decoration:none;opacity:.35;transition:all .3s}
+.n-links a:hover{opacity:1;color:var(--red)}
+
+/* HERO */
+.hero{height:100vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;background:radial-gradient(ellipse 90% 70% at 50% 50%,rgba(255,26,26,.06) 0%,transparent 60%),var(--b1)}
+.hero-content{text-align:center;z-index:2;position:relative}
+.hero h1{font-family:'Bangers',cursive;font-size:4.5rem;color:var(--red);text-shadow:0 0 12px var(--red),0 0 35px var(--rg),0 0 70px rgba(255,26,26,.25),3px 3px 0 var(--rd);letter-spacing:4px;line-height:1.05}
+.hero h1 small{display:block;font-size:1.8rem;letter-spacing:10px;color:var(--gold);text-shadow:0 0 10px rgba(240,192,64,.25);margin-top:5px}
+.hero-sub{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:1.1rem;opacity:.3;margin-top:18px;letter-spacing:3px}
+.hero-note{font-weight:200;font-size:.6rem;letter-spacing:5px;text-transform:uppercase;opacity:.2;margin-top:25px;color:var(--gold)}
+
+/* SCROLL REVEAL */
+.rv{opacity:0;transform:translateY(40px);transition:opacity .9s,transform .9s}.rv.v{opacity:1;transform:translateY(0)}
+.d1{transition-delay:.15s}.d2{transition-delay:.3s}.d3{transition-delay:.45s}
+
+/* SECTION STRUCTURE */
+.sec{padding:120px 20px;position:relative}
+.sec-dark{background:var(--b1)}
+.sec-mid{background:var(--b2)}
+.sec-lbl{font-weight:200;font-size:.6rem;letter-spacing:8px;text-transform:uppercase;color:var(--gold);opacity:.4;text-align:center;display:block;margin-bottom:12px}
+.sec-ttl{font-family:'Bangers',cursive;font-size:2.8rem;text-align:center;color:var(--cream);letter-spacing:3px;margin-bottom:50px}
+.sec-ttl em{color:var(--red);text-shadow:0 0 15px rgba(255,26,26,.2);font-style:normal}
+
+/* ROOM LAYOUT */
+.room{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1.2fr;gap:50px;align-items:center}
+.room.flip{grid-template-columns:1.2fr 1fr}
+.room.flip .room-txt{order:2}
+
+.room-txt h3{font-family:'Bangers',cursive;font-size:2.2rem;color:var(--red);text-shadow:0 0 10px rgba(255,26,26,.15),2px 2px 0 var(--rd);letter-spacing:2px;margin-bottom:16px}
+.room-txt p{font-family:'Cormorant Garamond',serif;font-size:.95rem;line-height:2;opacity:.4;font-style:italic}
+.tags{margin-top:22px;display:flex;flex-wrap:wrap;gap:8px}
+.tag{padding:5px 12px;border:1px solid rgba(255,26,26,.1);font-size:.55rem;letter-spacing:3px;text-transform:uppercase;opacity:.45;transition:all .3s}
+.tag:hover{border-color:var(--red);color:var(--red);opacity:1}
+
+/* =============================================
+   SVG SCENE CONTAINERS
+   ============================================= */
+.scene{width:100%;aspect-ratio:4/3;border-radius:4px;overflow:hidden;position:relative;border:1px solid rgba(255,26,26,.06)}
+
+/* =============================================
+   ROUTE 66 ENTRANCE SCENE
+   ============================================= */
+.entrance-scene{background:linear-gradient(180deg,#060810 0%,#0a0e18 40%,#0e1220 100%)}
+
+/* =============================================
+   MATERIAL PALETTE
+   ============================================= */
+.pal-sec{padding:80px 20px;background:var(--b1)}
+.pal-row{max-width:900px;margin:30px auto 0;display:grid;grid-template-columns:repeat(8,1fr);gap:10px}
+.pal-swatch{aspect-ratio:1;border-radius:3px;position:relative;transition:all .4s;cursor:default;overflow:hidden}
+.pal-swatch:hover{transform:translateY(-6px);box-shadow:0 10px 25px rgba(0,0,0,.4)}
+.pal-swatch span{position:absolute;bottom:0;left:0;right:0;text-align:center;font-size:.45rem;letter-spacing:2px;text-transform:uppercase;padding:4px;background:rgba(0,0,0,.6);opacity:0;transition:opacity .3s}
+.pal-swatch:hover span{opacity:1}
+
+/* =============================================
+   CTA
+   ============================================= */
+.cta{padding:120px 20px;text-align:center;background:radial-gradient(ellipse 60% 45% at 50% 50%,rgba(255,26,26,.07) 0%,transparent 60%),var(--b1)}
+.cta h2{font-family:'Bangers',cursive;font-size:3.5rem;color:var(--red);text-shadow:0 0 10px var(--red),0 0 30px var(--rg),3px 3px 0 var(--rd);margin-bottom:10px}
+.cta p{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:1rem;color:var(--gl);opacity:.35;margin-bottom:35px;letter-spacing:3px}
+.cta-btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.btn{padding:16px 45px;font-family:'Bangers',cursive;font-size:1rem;letter-spacing:4px;text-decoration:none;border:2px solid;cursor:pointer;transition:all .4s;position:relative;overflow:hidden}
+.btn::before{content:'';position:absolute;inset:0;transform:scaleX(0);transform-origin:left;transition:transform .4s;z-index:-1}
+.btn:hover::before{transform:scaleX(1)}
+.b-r{color:var(--red);border-color:var(--red);box-shadow:0 0 15px rgba(255,26,26,.1)}.b-r::before{background:var(--red)}.b-r:hover{color:#fff;box-shadow:0 0 40px rgba(255,26,26,.3)}
+.b-g{color:var(--gold);border-color:rgba(240,192,64,.3)}.b-g::before{background:var(--gold)}.b-g:hover{color:var(--b1)}
+
+footer{padding:30px;text-align:center;background:#040710;border-top:1px solid rgba(255,26,26,.04)}
+.f-b{font-family:'Bangers',cursive;font-size:1.2rem;letter-spacing:4px;color:var(--red);text-shadow:0 0 8px rgba(255,26,26,.2)}
+.f-d{font-weight:200;font-size:.5rem;letter-spacing:4px;text-transform:uppercase;opacity:.1;margin-top:8px}
+
+@media(max-width:900px){.room,.room.flip{grid-template-columns:1fr}.room.flip .room-txt{order:0}.hero h1{font-size:3rem}.pal-row{grid-template-columns:repeat(4,1fr)}.sec-ttl{font-size:2.2rem}}
+@media(max-width:500px){.hero h1{font-size:2.2rem}.hero h1 small{font-size:1.2rem}.n-links{display:none}.pal-row{grid-template-columns:repeat(4,1fr)}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="n-brand">BLUES BURGER</div>
+  <div class="n-links">
+    <a href="#entrance">Entrance</a>
+    <a href="#booths">Booths</a>
+    <a href="#bar">Bar</a>
+    <a href="#stage">Stage</a>
+    <a href="#guitars">Guitars</a>
+    <a href="#vinyl">Vinyl</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-content">
+    <h1>BLUES BURGER<small>Interior Design Concept</small></h1>
+    <p class="hero-sub">An American diner reborn in Old North, Tel Aviv</p>
+    <p class="hero-note">Confidential · Investment Materials · 2026</p>
+  </div>
+</section>
+
+<!-- =============================================
+     1. ENTRANCE / ROUTE 66 STOREFRONT
+     ============================================= -->
+<section class="sec sec-mid" id="entrance">
+  <span class="sec-lbl rv">Storefront</span>
+  <h2 class="sec-ttl rv">The <em>First Impression</em></h2>
+
+  <div class="room rv d1">
+    <div class="room-txt">
+      <h3>Route 66 Entrance</h3>
+      <p>The moment you see it from the street, you know this isn't another Tel Aviv burger spot. A tilted neon sign hangs above the door, casting red light across the sidewalk. A vintage Route 66 shield marks the entrance. Inside the vestibule, a hand-painted mural of an American highway stretches into the desert. The glass door is framed in brushed steel with a brass pull handle. Before you've ordered, you're already in America.</p>
+      <div class="tags">
+        <span class="tag">Hanging Neon Sign</span>
+        <span class="tag">Route 66 Shield</span>
+        <span class="tag">Highway Mural</span>
+        <span class="tag">Brushed Steel Frame</span>
+        <span class="tag">Red Sidewalk Glow</span>
+      </div>
+    </div>
+    <div class="scene entrance-scene">
+      <svg viewBox="0 0 600 450" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="neonGlow"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <filter id="neonGlow2"><feGaussianBlur stdDeviation="6" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="blur"/><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <filter id="softGlow"><feGaussianBlur stdDeviation="2" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <linearGradient id="brickG" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4d3020"/><stop offset="100%" stop-color="#3a2418"/></linearGradient>
+          <linearGradient id="sidewalk" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1a1a1a"/><stop offset="100%" stop-color="#111"/></linearGradient>
+          <linearGradient id="doorG" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#222"/><stop offset="100%" stop-color="#111"/></linearGradient>
+          <linearGradient id="warmLight" x1="0.5" y1="0" x2="0.5" y2="1"><stop offset="0%" stop-color="rgba(255,26,26,0.15)"/><stop offset="100%" stop-color="transparent"/></linearGradient>
+          <pattern id="brickPat" width="60" height="30" patternUnits="userSpaceOnUse">
+            <rect width="60" height="30" fill="#3a2418"/>
+            <rect x="0" y="0" width="28" height="13" rx="1" fill="#4d3020" stroke="#1e140e" stroke-width=".5"/>
+            <rect x="31" y="0" width="29" height="13" rx="1" fill="#443025" stroke="#1e140e" stroke-width=".5"/>
+            <rect x="15" y="15" width="28" height="13" rx="1" fill="#4a2e1e" stroke="#1e140e" stroke-width=".5"/>
+            <rect x="46" y="15" width="14" height="13" rx="1" fill="#4d3020" stroke="#1e140e" stroke-width=".5"/>
+            <rect x="0" y="15" width="13" height="13" rx="1" fill="#453025" stroke="#1e140e" stroke-width=".5"/>
+          </pattern>
+        </defs>
+
+        <!-- Sky / night -->
+        <rect width="600" height="450" fill="#060810"/>
+
+        <!-- Building wall -->
+        <rect x="60" y="50" width="480" height="400" fill="url(#brickPat)"/>
+
+        <!-- Sidewalk -->
+        <rect x="0" y="380" width="600" height="70" fill="url(#sidewalk)"/>
+        <line x1="0" y1="380" x2="600" y2="380" stroke="#2a2a2a" stroke-width="1"/>
+
+        <!-- Red glow on sidewalk from neon -->
+        <ellipse cx="300" cy="395" rx="180" ry="30" fill="rgba(255,26,26,0.06)"/>
+        <ellipse cx="300" cy="395" rx="100" ry="18" fill="rgba(255,26,26,0.04)"/>
+
+        <!-- Door frame -->
+        <rect x="220" y="180" width="160" height="200" rx="2" fill="#1a1a1a" stroke="#333" stroke-width="2"/>
+        <!-- Door -->
+        <rect x="225" y="185" width="72" height="190" rx="1" fill="url(#doorG)" stroke="#444" stroke-width="1"/>
+        <rect x="303" y="185" width="72" height="190" rx="1" fill="url(#doorG)" stroke="#444" stroke-width="1"/>
+        <!-- Door windows -->
+        <rect x="232" y="195" width="58" height="100" rx="1" fill="#0d1520" opacity=".7" stroke="#555" stroke-width=".5"/>
+        <rect x="310" y="195" width="58" height="100" rx="1" fill="#0d1520" opacity=".7" stroke="#555" stroke-width=".5"/>
+        <!-- Warm light through doors -->
+        <rect x="232" y="195" width="58" height="100" rx="1" fill="rgba(255,100,50,0.05)"/>
+        <rect x="310" y="195" width="58" height="100" rx="1" fill="rgba(255,100,50,0.05)"/>
+        <!-- Door handles -->
+        <rect x="288" y="270" width="3" height="24" rx="1.5" fill="#b08840"/>
+        <rect x="309" y="270" width="3" height="24" rx="1.5" fill="#b08840"/>
+        <!-- Door pull plate -->
+        <rect x="285" y="260" width="9" height="40" rx="2" fill="none" stroke="#99772e" stroke-width=".8"/>
+        <rect x="306" y="260" width="9" height="40" rx="2" fill="none" stroke="#99772e" stroke-width=".8"/>
+
+        <!-- Transom window above door -->
+        <rect x="222" y="155" width="156" height="22" rx="1" fill="#0d1520" stroke="#444" stroke-width="1"/>
+        <rect x="222" y="155" width="156" height="22" rx="1" fill="rgba(255,50,30,0.04)"/>
+
+        <!-- ===== HANGING NEON SIGN ===== -->
+        <!-- Bracket arm from wall -->
+        <rect x="178" y="72" width="50" height="5" rx="2" fill="#555" stroke="#777" stroke-width=".5"/>
+        <rect x="175" y="65" width="8" height="18" rx="1" fill="#666"/>
+        <!-- Chain links -->
+        <line x1="215" y1="77" x2="215" y2="88" stroke="#888" stroke-width="2"/>
+        <line x1="385" y1="77" x2="385" y2="88" stroke="#888" stroke-width="2"/>
+        <!-- Right bracket -->
+        <rect x="372" y="72" width="50" height="5" rx="2" fill="#555" stroke="#777" stroke-width=".5"/>
+        <rect x="417" y="65" width="8" height="18" rx="1" fill="#666"/>
+
+        <!-- Sign board -->
+        <rect x="190" y="86" width="220" height="62" rx="5" fill="#0a0a0f" stroke="#333" stroke-width="1.5"/>
+        <rect x="194" y="90" width="212" height="54" rx="3" fill="none" stroke="rgba(255,26,26,0.2)" stroke-width="1"/>
+
+        <!-- BLUES text neon -->
+        <text x="300" y="115" text-anchor="middle" font-family="Bangers,cursive" font-size="28" fill="#ff1a1a" filter="url(#neonGlow2)" opacity=".95">BLUES</text>
+        <!-- BURGER text neon -->
+        <text x="300" y="138" text-anchor="middle" font-family="Bangers,cursive" font-size="14" letter-spacing="6" fill="#ff1a1a" filter="url(#neonGlow)" opacity=".9">BURGER</text>
+
+        <!-- Neon glow halo around sign -->
+        <ellipse cx="300" cy="117" rx="130" ry="50" fill="rgba(255,26,26,0.03)"/>
+
+        <!-- ===== ROUTE 66 SHIELD ===== -->
+        <g transform="translate(440,200)">
+          <!-- Shield shape -->
+          <path d="M0,10 L10,0 L50,0 L60,10 L55,50 L30,65 L5,50 Z" fill="#111" stroke="#ff1a1a" stroke-width="2" filter="url(#softGlow)"/>
+          <path d="M4,13 L12,4 L48,4 L56,13 L52,48 L30,61 L8,48 Z" fill="none" stroke="rgba(255,26,26,0.4)" stroke-width="1"/>
+          <text x="30" y="22" text-anchor="middle" font-family="Oswald,sans-serif" font-size="7" font-weight="700" fill="#ff1a1a" filter="url(#softGlow)">ROUTE</text>
+          <text x="30" y="42" text-anchor="middle" font-family="Bangers,cursive" font-size="18" fill="#ff1a1a" filter="url(#neonGlow)">66</text>
+          <text x="30" y="56" text-anchor="middle" font-family="Oswald,sans-serif" font-size="5" font-weight="300" letter-spacing="1" fill="#ff1a1a">TLV</text>
+        </g>
+
+        <!-- ===== NEON OPEN SIGN on window ===== -->
+        <g transform="translate(100,240)">
+          <rect x="0" y="0" width="70" height="32" rx="3" fill="#0a0a10" stroke="#333" stroke-width="1"/>
+          <text x="35" y="22" text-anchor="middle" font-family="Bangers,cursive" font-size="16" fill="#ff1a1a" filter="url(#neonGlow)">OPEN</text>
+        </g>
+
+        <!-- Side windows -->
+        <rect x="85" y="195" width="110" height="130" rx="2" fill="#0d1520" stroke="#444" stroke-width="1"/>
+        <rect x="405" y="195" width="110" height="130" rx="2" fill="#0d1520" stroke="#444" stroke-width="1"/>
+        <!-- Warm interior glow through windows -->
+        <rect x="85" y="195" width="110" height="130" rx="2" fill="rgba(255,80,40,0.03)"/>
+        <rect x="405" y="195" width="110" height="130" rx="2" fill="rgba(255,80,40,0.03)"/>
+        <!-- Window mullions -->
+        <line x1="140" y1="195" x2="140" y2="325" stroke="#444" stroke-width=".5"/>
+        <line x1="460" y1="195" x2="460" y2="325" stroke="#444" stroke-width=".5"/>
+
+        <!-- Wall sconces -->
+        <g transform="translate(192,215)" opacity=".7">
+          <rect x="0" y="0" width="6" height="12" rx="1" fill="#555"/>
+          <ellipse cx="3" cy="-2" rx="5" ry="3" fill="rgba(255,180,100,0.15)"/>
+        </g>
+        <g transform="translate(402,215)" opacity=".7">
+          <rect x="0" y="0" width="6" height="12" rx="1" fill="#555"/>
+          <ellipse cx="3" cy="-2" rx="5" ry="3" fill="rgba(255,180,100,0.15)"/>
+        </g>
+
+        <!-- ===== NEON BORDER FRAME around building ===== -->
+        <rect x="72" y="56" width="456" height="322" rx="4" fill="none" stroke="rgba(255,26,26,0.08)" stroke-width="1" stroke-dasharray="8,4"/>
+
+        <!-- Awning -->
+        <path d="M80,180 L520,180 L515,192 L85,192 Z" fill="#5c0000" opacity=".8"/>
+        <path d="M80,180 L520,180 L515,192 L85,192 Z" fill="none" stroke="#8b0000" stroke-width=".5"/>
+
+        <!-- Street number -->
+        <text x="545" y="360" font-family="Oswald,sans-serif" font-size="10" font-weight="300" letter-spacing="2" fill="#555">12</text>
+
+        <!-- Sign glow animation overlay -->
+        <rect x="190" y="86" width="220" height="62" rx="5" fill="rgba(255,26,26,0.02)">
+          <animate attributeName="opacity" values="1;0.5;1" dur="4s" repeatCount="indefinite"/>
+        </rect>
+
+        <!-- Neon flicker on OPEN sign -->
+        <g opacity="1">
+          <animate attributeName="opacity" values="1;0.7;1;1;0.5;1" dur="5s" repeatCount="indefinite"/>
+          <rect x="100" y="240" width="70" height="32" rx="3" fill="rgba(255,26,26,0.02)"/>
+        </g>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- =============================================
+     2. RED LEATHER BOOTHS
+     ============================================= -->
+<section class="sec sec-dark" id="booths">
+  <span class="sec-lbl rv">Seating</span>
+  <h2 class="sec-ttl rv">The <em>Booth Experience</em></h2>
+
+  <div class="room flip rv d1">
+    <div class="room-txt">
+      <h3>Red Leather Booths</h3>
+      <p>Eight seats of deep-tufted oxblood leather, each booth a private world separated by dark walnut partitions. Chrome edge trim catches the neon. Pendant lights in brushed brass hang low, creating pools of warm amber. The checkered tile floor grounds it in classic American diner DNA. Between the booths, framed black-and-white photos of Memphis, Chicago, and the Mississippi Delta line the brick wall.</p>
+      <div class="tags">
+        <span class="tag">Oxblood Tufted Leather</span>
+        <span class="tag">Walnut Partitions</span>
+        <span class="tag">Chrome Edge Trim</span>
+        <span class="tag">Brass Pendants</span>
+        <span class="tag">B&W Delta Photos</span>
+      </div>
+    </div>
+    <div class="scene">
+      <svg viewBox="0 0 600 450" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="leath" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#8b2800"/><stop offset="50%" stop-color="#6b1a00"/><stop offset="100%" stop-color="#4a1200"/></linearGradient>
+          <linearGradient id="leathB" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#7a2200"/><stop offset="100%" stop-color="#501500"/></linearGradient>
+          <linearGradient id="woodT" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#402510"/><stop offset="50%" stop-color="#2e1a0c"/><stop offset="100%" stop-color="#402510"/></linearGradient>
+          <pattern id="checker" width="30" height="30" patternUnits="userSpaceOnUse"><rect width="30" height="30" fill="#1a1a1a"/><rect width="15" height="15" fill="#2a2a2a"/><rect x="15" y="15" width="15" height="15" fill="#2a2a2a"/></pattern>
+          <filter id="gl1"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <filter id="gl2"><feGaussianBlur stdDeviation="8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+
+        <!-- Brick wall bg -->
+        <rect width="600" height="450" fill="url(#brickPat)"/>
+
+        <!-- Floor in perspective -->
+        <polygon points="0,320 600,320 650,450 -50,450" fill="url(#checker)"/>
+        <polygon points="0,320 600,320 650,450 -50,450" fill="rgba(0,0,0,0.3)"/>
+
+        <!-- === LEFT BOOTH === -->
+        <!-- Back cushion -->
+        <rect x="30" y="140" width="40" height="175" rx="5" fill="url(#leathB)"/>
+        <!-- Tufting buttons on back -->
+        <circle cx="50" cy="170" r="2" fill="#3a1000" opacity=".5"/>
+        <circle cx="50" cy="200" r="2" fill="#3a1000" opacity=".5"/>
+        <circle cx="50" cy="230" r="2" fill="#3a1000" opacity=".5"/>
+        <circle cx="50" cy="260" r="2" fill="#3a1000" opacity=".5"/>
+        <circle cx="50" cy="290" r="2" fill="#3a1000" opacity=".5"/>
+        <!-- Tufting grooves -->
+        <line x1="35" y1="185" x2="65" y2="185" stroke="#3a1000" stroke-width=".5" opacity=".4"/>
+        <line x1="35" y1="215" x2="65" y2="215" stroke="#3a1000" stroke-width=".5" opacity=".4"/>
+        <line x1="35" y1="245" x2="65" y2="245" stroke="#3a1000" stroke-width=".5" opacity=".4"/>
+        <line x1="35" y1="275" x2="65" y2="275" stroke="#3a1000" stroke-width=".5" opacity=".4"/>
+        <!-- Seat cushion -->
+        <rect x="70" y="280" width="85" height="35" rx="4" fill="url(#leath)"/>
+        <line x1="75" y1="295" x2="150" y2="295" stroke="#3a1000" stroke-width=".5" opacity=".3"/>
+        <!-- Chrome trim -->
+        <line x1="70" y1="280" x2="155" y2="280" stroke="#b0b0b0" stroke-width="1.5"/>
+        <line x1="30" y1="315" x2="155" y2="315" stroke="#b0b0b0" stroke-width="1.5"/>
+
+        <!-- === TABLE === -->
+        <rect x="168" y="260" width="110" height="8" rx="2" fill="url(#woodT)"/>
+        <line x1="168" y1="260" x2="278" y2="260" stroke="#553818" stroke-width=".5"/>
+        <!-- Table leg -->
+        <rect x="218" y="268" width="10" height="50" rx="1" fill="#888"/>
+        <!-- Table base -->
+        <ellipse cx="223" cy="318" rx="25" ry="4" fill="#666"/>
+
+        <!-- === RIGHT BOOTH === -->
+        <rect x="530" y="140" width="40" height="175" rx="5" fill="url(#leathB)"/>
+        <circle cx="550" cy="170" r="2" fill="#3a1000" opacity=".5"/>
+        <circle cx="550" cy="200" r="2" fill="#3a1000" opacity=".5"/>
+        <circle cx="550" cy="230" r="2" fill="#3a1000" opacity=".5"/>
+        <circle cx="550" cy="260" r="2" fill="#3a1000" opacity=".5"/>
+        <circle cx="550" cy="290" r="2" fill="#3a1000" opacity=".5"/>
+        <line x1="535" y1="185" x2="565" y2="185" stroke="#3a1000" stroke-width=".5" opacity=".4"/>
+        <line x1="535" y1="215" x2="565" y2="215" stroke="#3a1000" stroke-width=".5" opacity=".4"/>
+        <line x1="535" y1="245" x2="565" y2="245" stroke="#3a1000" stroke-width=".5" opacity=".4"/>
+        <line x1="535" y1="275" x2="565" y2="275" stroke="#3a1000" stroke-width=".5" opacity=".4"/>
+        <rect x="445" y="280" width="85" height="35" rx="4" fill="url(#leath)"/>
+        <line x1="450" y1="295" x2="525" y2="295" stroke="#3a1000" stroke-width=".5" opacity=".3"/>
+        <line x1="445" y1="280" x2="530" y2="280" stroke="#b0b0b0" stroke-width="1.5"/>
+        <line x1="445" y1="315" x2="570" y2="315" stroke="#b0b0b0" stroke-width="1.5"/>
+
+        <!-- Second table -->
+        <rect x="322" y="260" width="110" height="8" rx="2" fill="url(#woodT)"/>
+        <rect x="372" y="268" width="10" height="50" rx="1" fill="#888"/>
+        <ellipse cx="377" cy="318" rx="25" ry="4" fill="#666"/>
+
+        <!-- === PENDANT LIGHTS === -->
+        <g>
+          <line x1="223" y1="0" x2="223" y2="100" stroke="#444" stroke-width="1.5"/>
+          <path d="M208,100 Q215,95 223,100 Q231,95 238,100 L235,115 L211,115 Z" fill="#664400"/>
+          <ellipse cx="223" cy="120" rx="18" ry="8" fill="rgba(255,200,100,0.08)"/>
+          <ellipse cx="223" cy="170" rx="40" ry="50" fill="rgba(255,180,80,0.02)"/>
+          <circle cx="223" cy="105" r="3" fill="#ffcc66" filter="url(#gl1)" opacity=".6"/>
+        </g>
+        <g>
+          <line x1="377" y1="0" x2="377" y2="100" stroke="#444" stroke-width="1.5"/>
+          <path d="M362,100 Q369,95 377,100 Q385,95 392,100 L389,115 L365,115 Z" fill="#664400"/>
+          <ellipse cx="377" cy="120" rx="18" ry="8" fill="rgba(255,200,100,0.08)"/>
+          <ellipse cx="377" cy="170" rx="40" ry="50" fill="rgba(255,180,80,0.02)"/>
+          <circle cx="377" cy="105" r="3" fill="#ffcc66" filter="url(#gl1)" opacity=".6"/>
+        </g>
+
+        <!-- === NEON TUBE on wall === -->
+        <g filter="url(#gl2)">
+          <text x="300" y="65" text-anchor="middle" font-family="Bangers,cursive" font-size="26" fill="#ff1a1a" opacity=".9">BLUES BURGER</text>
+        </g>
+        <!-- Neon halo -->
+        <ellipse cx="300" cy="55" rx="100" ry="25" fill="rgba(255,26,26,0.03)">
+          <animate attributeName="opacity" values="1;0.6;1" dur="3s" repeatCount="indefinite"/>
+        </ellipse>
+
+        <!-- Photo frames on wall -->
+        <rect x="100" y="90" width="40" height="50" rx="1" fill="#111" stroke="#333" stroke-width="1"/>
+        <rect x="104" y="94" width="32" height="42" fill="#1a1a1a"/>
+        <rect x="460" y="90" width="40" height="50" rx="1" fill="#111" stroke="#333" stroke-width="1"/>
+        <rect x="464" y="94" width="32" height="42" fill="#1a1a1a"/>
+        <rect x="280" y="85" width="40" height="28" rx="1" fill="none" stroke="#333" stroke-width="1"/>
+
+        <!-- Condiments on table -->
+        <rect x="200" y="248" width="8" height="14" rx="2" fill="#8b0000" opacity=".6"/>
+        <rect x="212" y="250" width="6" height="12" rx="2" fill="#444" opacity=".5"/>
+        <rect x="354" y="248" width="8" height="14" rx="2" fill="#8b0000" opacity=".6"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- =============================================
+     3. BOURBON BAR
+     ============================================= -->
+<section class="sec sec-mid" id="bar">
+  <span class="sec-lbl rv">The Bar</span>
+  <h2 class="sec-ttl rv">The <em>Bourbon Bar</em></h2>
+
+  <div class="room rv d1">
+    <div class="room-txt">
+      <h3>Ten Stools. One Bar.</h3>
+      <p>Dark walnut counter polished to a mirror finish. Behind it, a full mirrored wall reflects rows of bourbon, rye, and single malts. Chrome beer taps stand at attention. The bartender works under a neon "BOURBON" sign whose red glow turns every glass into a jewel. Five craft beers on tap — two local, three imported. This is where you start the night, and where you end it.</p>
+      <div class="tags">
+        <span class="tag">Dark Walnut Counter</span>
+        <span class="tag">Mirrored Back Bar</span>
+        <span class="tag">Chrome Taps</span>
+        <span class="tag">Neon Bar Sign</span>
+        <span class="tag">10 Chrome Stools</span>
+      </div>
+    </div>
+    <div class="scene">
+      <svg viewBox="0 0 600 450" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="mirrorG" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1a1a22"/><stop offset="50%" stop-color="#12121a"/><stop offset="100%" stop-color="#0e0e16"/></linearGradient>
+          <linearGradient id="barTop" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#402510"/><stop offset="100%" stop-color="#2a1608"/></linearGradient>
+          <linearGradient id="barFr" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2a1608"/><stop offset="100%" stop-color="#1a0d04"/></linearGradient>
+        </defs>
+
+        <!-- Dark bg -->
+        <rect width="600" height="450" fill="#0a0a12"/>
+
+        <!-- Back mirror -->
+        <rect x="40" y="40" width="520" height="210" rx="3" fill="url(#mirrorG)" stroke="#2a2a2a" stroke-width="1"/>
+        <!-- Mirror reflection hint -->
+        <line x1="50" y1="50" x2="50" y2="240" stroke="rgba(255,255,255,0.02)" stroke-width="1"/>
+
+        <!-- Shelves -->
+        <rect x="50" y="120" width="500" height="6" rx="1" fill="#402510" stroke="#553818" stroke-width=".5"/>
+        <rect x="50" y="190" width="500" height="6" rx="1" fill="#402510" stroke="#553818" stroke-width=".5"/>
+
+        <!-- === BOTTLES ON TOP SHELF === -->
+        <g opacity=".85">
+          <!-- Tall bourbon -->
+          <rect x="75" y="75" width="14" height="44" rx="2" fill="#5c3000"/><rect x="79" y="68" width="6" height="10" rx="2" fill="#5c3000"/>
+          <rect x="78" y="85" width="8" height="12" rx="1" fill="#f0c040" opacity=".3"/>
+          <!-- Green bottle -->
+          <rect x="110" y="72" width="12" height="47" rx="2" fill="#1a4a1a"/><rect x="113" y="64" width="6" height="11" rx="2" fill="#1a4a1a"/>
+          <!-- Red wine shaped -->
+          <rect x="145" y="78" width="14" height="41" rx="2" fill="#5c1a1a"/><rect x="149" y="68" width="6" height="13" rx="2" fill="#5c1a1a"/>
+          <!-- Amber short -->
+          <rect x="180" y="84" width="16" height="35" rx="3" fill="#7a5000"/><rect x="184" y="78" width="8" height="9" rx="2" fill="#7a5000"/>
+          <!-- Clear/vodka -->
+          <rect x="220" y="76" width="11" height="43" rx="2" fill="#2a2a3a"/><rect x="223" y="68" width="5" height="11" rx="2" fill="#2a2a3a"/>
+          <!-- Dark bourbon -->
+          <rect x="255" y="73" width="14" height="46" rx="2" fill="#3a2000"/><rect x="259" y="65" width="6" height="11" rx="2" fill="#3a2000"/>
+          <rect x="258" y="88" width="8" height="10" rx="1" fill="#f0c040" opacity=".25"/>
+          <!-- Tall slim -->
+          <rect x="295" y="70" width="10" height="49" rx="2" fill="#4a3a1a"/><rect x="298" y="62" width="4" height="11" rx="2" fill="#4a3a1a"/>
+          <!-- Scotch -->
+          <rect x="330" y="80" width="16" height="39" rx="3" fill="#6b4000"/><rect x="334" y="73" width="8" height="10" rx="2" fill="#6b4000"/>
+          <!-- Blue bottle -->
+          <rect x="370" y="74" width="12" height="45" rx="2" fill="#1a2a5c"/><rect x="373" y="66" width="6" height="11" rx="2" fill="#1a2a5c"/>
+          <!-- Rye -->
+          <rect x="405" y="77" width="14" height="42" rx="2" fill="#5c4020"/><rect x="409" y="69" width="6" height="11" rx="2" fill="#5c4020"/>
+          <!-- Short fat -->
+          <rect x="445" y="86" width="18" height="33" rx="4" fill="#3a1a3a"/><rect x="450" y="80" width="8" height="9" rx="2" fill="#3a1a3a"/>
+          <!-- Last bourbon -->
+          <rect x="485" y="72" width="14" height="47" rx="2" fill="#4a2800"/><rect x="489" y="64" width="6" height="11" rx="2" fill="#4a2800"/>
+        </g>
+
+        <!-- === BOTTLES ON BOTTOM SHELF === -->
+        <g opacity=".75">
+          <rect x="85" y="148" width="12" height="41" rx="2" fill="#5c2020"/>
+          <rect x="120" y="145" width="14" height="44" rx="2" fill="#3a5c1a"/>
+          <rect x="160" y="150" width="16" height="39" rx="3" fill="#7a4a00"/>
+          <rect x="200" y="146" width="11" height="43" rx="2" fill="#2a2a4a"/>
+          <rect x="240" y="152" width="14" height="37" rx="2" fill="#5c3a20"/>
+          <rect x="280" y="144" width="12" height="45" rx="2" fill="#1a4a4a"/>
+          <rect x="320" y="149" width="15" height="40" rx="3" fill="#5c1a3a"/>
+          <rect x="360" y="147" width="12" height="42" rx="2" fill="#4a4a1a"/>
+          <rect x="400" y="153" width="14" height="36" rx="2" fill="#3a2a1a"/>
+          <rect x="440" y="145" width="11" height="44" rx="2" fill="#1a3a5c"/>
+          <rect x="475" y="150" width="16" height="39" rx="3" fill="#6b3000"/>
+        </g>
+
+        <!-- === NEON "BOURBON" SIGN === -->
+        <text x="300" y="38" text-anchor="middle" font-family="Bangers,cursive" font-size="22" fill="#ff1a1a" filter="url(#neonGlow2)">BOURBON</text>
+        <ellipse cx="300" cy="30" rx="80" ry="15" fill="rgba(255,26,26,0.03)">
+          <animate attributeName="opacity" values="1;0.5;1" dur="4s" repeatCount="indefinite"/>
+        </ellipse>
+
+        <!-- === BAR COUNTER === -->
+        <rect x="20" y="275" width="560" height="14" rx="2" fill="url(#barTop)" stroke="#553818" stroke-width=".5"/>
+        <!-- Bar edge highlight -->
+        <line x1="20" y1="275" x2="580" y2="275" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+        <!-- Bar front -->
+        <rect x="20" y="289" width="560" height="110" rx="2" fill="url(#barFr)"/>
+        <!-- Bar panel lines -->
+        <line x1="130" y1="295" x2="130" y2="393" stroke="rgba(255,255,255,0.02)" stroke-width="1"/>
+        <line x1="250" y1="295" x2="250" y2="393" stroke="rgba(255,255,255,0.02)" stroke-width="1"/>
+        <line x1="370" y1="295" x2="370" y2="393" stroke="rgba(255,255,255,0.02)" stroke-width="1"/>
+        <line x1="490" y1="295" x2="490" y2="393" stroke="rgba(255,255,255,0.02)" stroke-width="1"/>
+        <!-- Bar foot rail -->
+        <line x1="30" y1="370" x2="570" y2="370" stroke="#666" stroke-width="2"/>
+
+        <!-- === BEER TAPS === -->
+        <g opacity=".8">
+          <rect x="260" y="250" width="5" height="26" rx="1" fill="#b08840"/>
+          <rect x="257" y="245" width="11" height="8" rx="2" fill="#c9a84c"/>
+          <rect x="290" y="248" width="5" height="28" rx="1" fill="#888"/>
+          <rect x="287" y="243" width="11" height="8" rx="2" fill="#aaa"/>
+          <rect x="320" y="250" width="5" height="26" rx="1" fill="#b08840"/>
+          <rect x="317" y="245" width="11" height="8" rx="2" fill="#c9a84c"/>
+          <rect x="350" y="252" width="5" height="24" rx="1" fill="#888"/>
+          <rect x="347" y="247" width="11" height="8" rx="2" fill="#aaa"/>
+        </g>
+
+        <!-- === BAR STOOLS === -->
+        <g>
+          <!-- Stool 1 -->
+          <ellipse cx="80" cy="400" rx="16" ry="4" fill="#666"/>
+          <rect x="77" y="360" width="6" height="40" rx="1" fill="#888"/>
+          <ellipse cx="80" cy="356" rx="14" ry="5" fill="#b0b0b0" stroke="#ccc" stroke-width=".5"/>
+          <!-- Stool 2 -->
+          <ellipse cx="170" cy="400" rx="16" ry="4" fill="#666"/>
+          <rect x="167" y="360" width="6" height="40" rx="1" fill="#888"/>
+          <ellipse cx="170" cy="356" rx="14" ry="5" fill="#b0b0b0" stroke="#ccc" stroke-width=".5"/>
+          <!-- Stool 3 -->
+          <ellipse cx="260" cy="400" rx="16" ry="4" fill="#666"/>
+          <rect x="257" y="360" width="6" height="40" rx="1" fill="#888"/>
+          <ellipse cx="260" cy="356" rx="14" ry="5" fill="#b0b0b0" stroke="#ccc" stroke-width=".5"/>
+          <!-- Stool 4 -->
+          <ellipse cx="350" cy="400" rx="16" ry="4" fill="#666"/>
+          <rect x="347" y="360" width="6" height="40" rx="1" fill="#888"/>
+          <ellipse cx="350" cy="356" rx="14" ry="5" fill="#b0b0b0" stroke="#ccc" stroke-width=".5"/>
+          <!-- Stool 5 -->
+          <ellipse cx="440" cy="400" rx="16" ry="4" fill="#666"/>
+          <rect x="437" y="360" width="6" height="40" rx="1" fill="#888"/>
+          <ellipse cx="440" cy="356" rx="14" ry="5" fill="#b0b0b0" stroke="#ccc" stroke-width=".5"/>
+          <!-- Stool 6 -->
+          <ellipse cx="530" cy="400" rx="16" ry="4" fill="#666"/>
+          <rect x="527" y="360" width="6" height="40" rx="1" fill="#888"/>
+          <ellipse cx="530" cy="356" rx="14" ry="5" fill="#b0b0b0" stroke="#ccc" stroke-width=".5"/>
+        </g>
+
+        <!-- Glass on counter -->
+        <rect x="120" y="260" width="12" height="16" rx="1" fill="rgba(200,200,255,0.08)" stroke="rgba(255,255,255,0.06)" stroke-width=".5"/>
+        <rect x="460" y="258" width="14" height="18" rx="1" fill="rgba(200,200,255,0.06)" stroke="rgba(255,255,255,0.05)" stroke-width=".5"/>
+        <ellipse cx="127" cy="258" rx="7" ry="2" fill="rgba(200,170,100,0.1)"/>
+
+        <!-- Ambient neon glow on bar surface -->
+        <rect x="20" y="270" width="560" height="8" fill="rgba(255,26,26,0.02)"/>
+
+        <!-- Floor -->
+        <rect x="0" y="400" width="600" height="50" fill="#0a0a0a"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- =============================================
+     4. CORNER STAGE
+     ============================================= -->
+<section class="sec sec-dark" id="stage">
+  <span class="sec-lbl rv">Music</span>
+  <h2 class="sec-ttl rv">The <em>Corner Stage</em></h2>
+
+  <div class="room flip rv d1">
+    <div class="room-txt">
+      <h3>Where the Blues Live</h3>
+      <p>A raised oak platform, a single spotlight overhead, warm tube amplifiers glowing amber on each side. A vintage Shure SM58 on a chrome stand. Room for a three-piece — guitar, bass, drums. Twenty seats face the stage in a gentle semicircle. Thursday nights, the house lights dim, the neon hums, and for two hours this corner of Old North Tel Aviv becomes the Mississippi Delta.</p>
+      <div class="tags">
+        <span class="tag">Raised Oak Stage</span>
+        <span class="tag">Spotlight Rig</span>
+        <span class="tag">Tube Amps</span>
+        <span class="tag">SM58 Mic</span>
+        <span class="tag">20-Seat Semicircle</span>
+      </div>
+    </div>
+    <div class="scene">
+      <svg viewBox="0 0 600 450" xmlns="http://www.w3.org/2000/svg">
+        <!-- Dark room -->
+        <rect width="600" height="450" fill="#0a0808"/>
+
+        <!-- Spotlight cone -->
+        <polygon points="290,0 310,0 420,350 180,350" fill="rgba(255,26,26,0.015)"/>
+        <polygon points="295,0 305,0 380,300 220,300" fill="rgba(255,26,26,0.01)"/>
+
+        <!-- Spotlight housing -->
+        <rect x="282" y="0" width="36" height="20" rx="3" fill="#333" stroke="#555" stroke-width=".5"/>
+        <circle cx="300" cy="22" r="6" fill="#ff1a1a" opacity=".6" filter="url(#neonGlow)"/>
+        <circle cx="300" cy="22" r="3" fill="#ff4444" opacity=".8">
+          <animate attributeName="opacity" values=".8;.5;.8" dur="3s" repeatCount="indefinite"/>
+        </circle>
+
+        <!-- Stage platform -->
+        <polygon points="80,280 520,280 560,350 40,350" fill="#2e1a0c"/>
+        <polygon points="80,280 520,280 560,350 40,350" fill="url(#woodT)" opacity=".7"/>
+        <!-- Stage edge -->
+        <line x1="80" y1="280" x2="520" y2="280" stroke="#553818" stroke-width="2"/>
+        <!-- Stage floor boards -->
+        <line x1="150" y1="282" x2="120" y2="348" stroke="rgba(0,0,0,0.1)" stroke-width="1"/>
+        <line x1="250" y1="282" x2="230" y2="348" stroke="rgba(0,0,0,0.1)" stroke-width="1"/>
+        <line x1="350" y1="282" x2="370" y2="348" stroke="rgba(0,0,0,0.1)" stroke-width="1"/>
+        <line x1="450" y1="282" x2="480" y2="348" stroke="rgba(0,0,0,0.1)" stroke-width="1"/>
+
+        <!-- === AMPLIFIERS === -->
+        <!-- Left amp -->
+        <rect x="110" y="230" width="60" height="50" rx="3" fill="#1a1a1a" stroke="#333" stroke-width="1"/>
+        <rect x="115" y="235" width="50" height="35" rx="2" fill="#111"/>
+        <!-- Speaker grille -->
+        <circle cx="140" cy="252" r="14" fill="none" stroke="#2a2a2a" stroke-width="1"/>
+        <circle cx="140" cy="252" r="10" fill="none" stroke="#222" stroke-width=".5"/>
+        <circle cx="140" cy="252" r="6" fill="none" stroke="#1e1e1e" stroke-width=".5"/>
+        <!-- Amp controls (small dots) -->
+        <circle cx="120" y="228" r="1.5" fill="#555"/>
+        <circle cx="130" y="228" r="1.5" fill="#555"/>
+        <circle cx="140" y="228" r="1.5" fill="#555"/>
+        <!-- Amp power LED -->
+        <circle cx="165" cy="234" r="1.5" fill="#ff1a1a" opacity=".7">
+          <animate attributeName="opacity" values=".7;.4;.7" dur="2s" repeatCount="indefinite"/>
+        </circle>
+
+        <!-- Right amp -->
+        <rect x="430" y="230" width="60" height="50" rx="3" fill="#1a1a1a" stroke="#333" stroke-width="1"/>
+        <rect x="435" y="235" width="50" height="35" rx="2" fill="#111"/>
+        <circle cx="460" cy="252" r="14" fill="none" stroke="#2a2a2a" stroke-width="1"/>
+        <circle cx="460" cy="252" r="10" fill="none" stroke="#222" stroke-width=".5"/>
+        <circle cx="460" cy="252" r="6" fill="none" stroke="#1e1e1e" stroke-width=".5"/>
+        <circle cx="485" cy="234" r="1.5" fill="#ff1a1a" opacity=".7">
+          <animate attributeName="opacity" values=".7;.4;.7" dur="2.5s" repeatCount="indefinite"/>
+        </circle>
+
+        <!-- === MICROPHONE === -->
+        <line x1="300" y1="180" x2="300" y2="278" stroke="#888" stroke-width="2.5"/>
+        <!-- Mic clip -->
+        <rect x="294" y="175" width="12" height="6" rx="2" fill="#666"/>
+        <!-- Mic head -->
+        <ellipse cx="300" cy="168" rx="8" ry="12" fill="#888" stroke="#aaa" stroke-width=".5"/>
+        <!-- Mic grille pattern -->
+        <ellipse cx="300" cy="168" rx="6" ry="10" fill="none" stroke="#666" stroke-width=".5"/>
+        <line x1="294" y1="164" x2="306" y2="164" stroke="#666" stroke-width=".3"/>
+        <line x1="294" y1="168" x2="306" y2="168" stroke="#666" stroke-width=".3"/>
+        <line x1="294" y1="172" x2="306" y2="172" stroke="#666" stroke-width=".3"/>
+        <!-- Mic base -->
+        <ellipse cx="300" cy="278" rx="18" ry="4" fill="#555"/>
+
+        <!-- === GUITAR on stand === -->
+        <!-- Guitar body -->
+        <g transform="translate(380,170) rotate(12)">
+          <ellipse cx="0" cy="30" rx="18" ry="22" fill="#5c2000" stroke="#7a3000" stroke-width="1"/>
+          <ellipse cx="0" cy="0" rx="14" ry="18" fill="#5c2000" stroke="#7a3000" stroke-width="1"/>
+          <rect x="-2" y="-60" width="4" height="65" rx="1" fill="#402000"/>
+          <!-- Sound hole -->
+          <ellipse cx="0" cy="25" rx="6" ry="6" fill="#2a1000" stroke="#4a2000" stroke-width=".5"/>
+          <!-- Strings -->
+          <line x1="-3" y1="-55" x2="-3" y2="45" stroke="#ccc" stroke-width=".3" opacity=".4"/>
+          <line x1="0" y1="-55" x2="0" y2="45" stroke="#ccc" stroke-width=".3" opacity=".4"/>
+          <line x1="3" y1="-55" x2="3" y2="45" stroke="#ccc" stroke-width=".3" opacity=".4"/>
+          <!-- Headstock -->
+          <rect x="-4" y="-68" width="8" height="12" rx="2" fill="#2a1000"/>
+          <circle cx="-2" cy="-62" r="1" fill="#b08840"/>
+          <circle cx="2" cy="-62" r="1" fill="#b08840"/>
+        </g>
+
+        <!-- Guitar stand -->
+        <line x1="380" y1="220" x2="380" y2="278" stroke="#666" stroke-width="1.5"/>
+        <line x1="370" y1="278" x2="390" y2="278" stroke="#666" stroke-width="1.5"/>
+
+        <!-- Monitor wedge -->
+        <polygon points="260,268 330,268 335,278 255,278" fill="#1a1a1a" stroke="#333" stroke-width=".5"/>
+        <line x1="265" y1="273" x2="325" y2="273" stroke="#222" stroke-width=".5"/>
+
+        <!-- Cable on floor -->
+        <path d="M300,278 Q320,295 280,310 Q240,325 260,345" fill="none" stroke="#222" stroke-width="1.5"/>
+
+        <!-- Audience area floor -->
+        <rect x="0" y="350" width="600" height="100" fill="#0a0a0a"/>
+
+        <!-- Audience chair hints -->
+        <g opacity=".15">
+          <rect x="120" y="370" width="20" height="16" rx="3" fill="#6b1a00"/>
+          <rect x="170" y="380" width="20" height="16" rx="3" fill="#6b1a00"/>
+          <rect x="230" y="370" width="20" height="16" rx="3" fill="#6b1a00"/>
+          <rect x="350" y="370" width="20" height="16" rx="3" fill="#6b1a00"/>
+          <rect x="410" y="380" width="20" height="16" rx="3" fill="#6b1a00"/>
+          <rect x="460" y="370" width="20" height="16" rx="3" fill="#6b1a00"/>
+        </g>
+
+        <!-- Stage red glow on floor -->
+        <ellipse cx="300" cy="320" rx="150" ry="25" fill="rgba(255,26,26,0.03)">
+          <animate attributeName="rx" values="150;160;150" dur="4s" repeatCount="indefinite"/>
+        </ellipse>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- =============================================
+     5. GUITAR WALL
+     ============================================= -->
+<section class="sec sec-mid" id="guitars">
+  <span class="sec-lbl rv">Décor</span>
+  <h2 class="sec-ttl rv">The <em>Guitar Wall</em></h2>
+
+  <div class="room rv d1">
+    <div class="room-txt">
+      <h3>Twelve Stories on Brick</h3>
+      <p>Twelve instruments, each mounted on custom-forged iron brackets against exposed brick. A 1962 Gibson ES-335 sits beside a road-worn Fender Telecaster. Below them, a resonator guitar from the Delta. Between the instruments, small brass plaques tell each guitar's story. A single neon tube traces the word "BLUES" between the second and third row. It's museum, shrine, and conversation piece in one.</p>
+      <div class="tags">
+        <span class="tag">12 Instruments</span>
+        <span class="tag">Iron Brackets</span>
+        <span class="tag">Exposed Brick</span>
+        <span class="tag">Brass Story Plaques</span>
+        <span class="tag">Neon Accent</span>
+      </div>
+    </div>
+    <div class="scene">
+      <svg viewBox="0 0 600 450" xmlns="http://www.w3.org/2000/svg">
+        <!-- Brick wall -->
+        <rect width="600" height="450" fill="url(#brickPat)"/>
+
+        <!-- === GUITAR SVG SILHOUETTES === -->
+        <!-- Row 1 — top -->
+        <!-- Acoustic guitar 1 -->
+        <g transform="translate(80,40) rotate(-18)" opacity=".85">
+          <ellipse cx="0" cy="55" rx="26" ry="32" fill="#5c2800" stroke="#7a3800" stroke-width="1.5"/>
+          <ellipse cx="0" cy="15" rx="20" ry="26" fill="#5c2800" stroke="#7a3800" stroke-width="1.5"/>
+          <rect x="-3" y="-80" width="6" height="85" rx="2" fill="#3a1800"/>
+          <ellipse cx="0" cy="48" rx="8" ry="8" fill="#2a1200" stroke="#4a2200" stroke-width=".8"/>
+          <rect x="-5" y="-90" width="10" height="14" rx="3" fill="#2a1200"/>
+          <circle cx="-3" cy="-84" r="1.5" fill="#b08840"/><circle cx="3" cy="-84" r="1.5" fill="#b08840"/>
+          <circle cx="-3" cy="-80" r="1.5" fill="#b08840"/><circle cx="3" cy="-80" r="1.5" fill="#b08840"/>
+          <!-- Bracket -->
+          <rect x="-4" y="-30" width="8" height="3" rx="1" fill="#555"/>
+        </g>
+
+        <!-- Electric guitar (LP shape) -->
+        <g transform="translate(210,30) rotate(10)" opacity=".85">
+          <ellipse cx="0" cy="50" rx="22" ry="28" fill="#8b0000" stroke="#aa2200" stroke-width="1.5"/>
+          <ellipse cx="0" cy="20" rx="18" ry="22" fill="#8b0000" stroke="#aa2200" stroke-width="1.5"/>
+          <rect x="-3" y="-75" width="6" height="82" rx="2" fill="#3a0000"/>
+          <rect x="-5" y="-88" width="10" height="16" rx="3" fill="#3a0000"/>
+          <circle cx="-3" cy="-80" r="1.5" fill="#b08840"/><circle cx="3" cy="-80" r="1.5" fill="#b08840"/>
+          <!-- Pickups -->
+          <rect x="-8" y="28" width="16" height="5" rx="1" fill="#222"/>
+          <rect x="-8" y="42" width="16" height="5" rx="1" fill="#222"/>
+          <rect x="-4" y="-25" width="8" height="3" rx="1" fill="#555"/>
+        </g>
+
+        <!-- Telecaster shape -->
+        <g transform="translate(350,35) rotate(-12)" opacity=".85">
+          <rect x="-16" y="15" width="32" height="55" rx="12" fill="#f0c040" stroke="#d4a030" stroke-width="1.5"/>
+          <rect x="-12" y="5" width="24" height="15" rx="6" fill="#f0c040" stroke="#d4a030" stroke-width="1"/>
+          <rect x="-3" y="-70" width="6" height="78" rx="2" fill="#5c3000"/>
+          <rect x="-5" y="-82" width="10" height="15" rx="2" fill="#5c3000"/>
+          <circle cx="-3" cy="-74" r="1.5" fill="#b08840"/><circle cx="3" cy="-74" r="1.5" fill="#b08840"/>
+          <rect x="-6" y="28" width="12" height="4" rx="1" fill="#222"/>
+          <rect x="-6" y="42" width="12" height="4" rx="1" fill="#222"/>
+          <rect x="-4" y="-20" width="8" height="3" rx="1" fill="#555"/>
+        </g>
+
+        <!-- SG shape -->
+        <g transform="translate(490,40) rotate(15)" opacity=".85">
+          <path d="M-18,15 Q-22,45 -15,65 Q0,75 15,65 Q22,45 18,15 Q10,5 0,8 Q-10,5 -18,15Z" fill="#8b0000" stroke="#aa1111" stroke-width="1.5"/>
+          <rect x="-3" y="-65" width="6" height="72" rx="2" fill="#3a0000"/>
+          <rect x="-5" y="-78" width="10" height="16" rx="3" fill="#3a0000"/>
+          <rect x="-4" y="-15" width="8" height="3" rx="1" fill="#555"/>
+        </g>
+
+        <!-- === NEON "BLUES" between rows === -->
+        <text x="300" y="205" text-anchor="middle" font-family="Bangers,cursive" font-size="36" fill="#ff1a1a" filter="url(#neonGlow2)" opacity=".9">BLUES</text>
+        <ellipse cx="300" cy="195" rx="90" ry="20" fill="rgba(255,26,26,0.03)">
+          <animate attributeName="opacity" values="1;0.5;1" dur="3.5s" repeatCount="indefinite"/>
+        </ellipse>
+
+        <!-- Row 2 — bottom guitars -->
+        <!-- Flying V -->
+        <g transform="translate(110,260) rotate(-22)" opacity=".8">
+          <polygon points="-20,0 0,55 20,0 3,-60 -3,-60" fill="#1a1a1a" stroke="#333" stroke-width="1.5"/>
+          <rect x="-4" y="-75" width="8" height="18" rx="3" fill="#111"/>
+          <rect x="-3" y="0" width="6" height="3" rx="1" fill="#555"/>
+        </g>
+
+        <!-- 335 hollow body -->
+        <g transform="translate(260,250) rotate(8)" opacity=".8">
+          <ellipse cx="0" cy="35" rx="24" ry="35" fill="#5c2000" stroke="#7a3000" stroke-width="1.5"/>
+          <rect x="-15" y="0" width="30" height="10" rx="3" fill="#5c2000"/>
+          <rect x="-3" y="-55" width="6" height="60" rx="2" fill="#3a1800"/>
+          <rect x="-5" y="-68" width="10" height="16" rx="3" fill="#3a1800"/>
+          <!-- F-holes -->
+          <path d="M-10,20 Q-8,35 -10,50" fill="none" stroke="#2a1000" stroke-width="1.5"/>
+          <path d="M10,20 Q12,35 10,50" fill="none" stroke="#2a1000" stroke-width="1.5"/>
+          <rect x="-3" y="-5" width="6" height="3" rx="1" fill="#555"/>
+        </g>
+
+        <!-- Resonator -->
+        <g transform="translate(420,255) rotate(-10)" opacity=".8">
+          <ellipse cx="0" cy="35" rx="24" ry="32" fill="#888" stroke="#aaa" stroke-width="1.5"/>
+          <circle cx="0" cy="35" r="16" fill="none" stroke="#777" stroke-width="1"/>
+          <circle cx="0" cy="35" r="10" fill="none" stroke="#666" stroke-width=".5"/>
+          <circle cx="0" cy="35" r="4" fill="#555"/>
+          <rect x="-3" y="-55" width="6" height="58" rx="2" fill="#777"/>
+          <rect x="-5" y="-65" width="10" height="13" rx="3" fill="#666"/>
+          <rect x="-3" y="-5" width="6" height="3" rx="1" fill="#555"/>
+        </g>
+
+        <!-- Bass guitar -->
+        <g transform="translate(540,265) rotate(18)" opacity=".75">
+          <rect x="-14" y="10" width="28" height="50" rx="10" fill="#1a1a4a" stroke="#2a2a6a" stroke-width="1.5"/>
+          <rect x="-3" y="-65" width="6" height="78" rx="2" fill="#111144"/>
+          <rect x="-6" y="-80" width="12" height="18" rx="3" fill="#111144"/>
+          <circle cx="-4" cy="-72" r="1.5" fill="#b08840"/><circle cx="4" cy="-72" r="1.5" fill="#b08840"/>
+          <rect x="-3" y="0" width="6" height="3" rx="1" fill="#555"/>
+        </g>
+
+        <!-- Brass plaques -->
+        <rect x="130" y="180" width="35" height="10" rx="1" fill="#8b6914" opacity=".3"/>
+        <rect x="290" y="180" width="35" height="10" rx="1" fill="#8b6914" opacity=".3"/>
+        <rect x="440" y="180" width="35" height="10" rx="1" fill="#8b6914" opacity=".3"/>
+
+        <!-- Spot lights on guitars -->
+        <ellipse cx="80" cy="60" rx="35" ry="15" fill="rgba(255,200,150,0.02)"/>
+        <ellipse cx="210" cy="55" rx="35" ry="15" fill="rgba(255,200,150,0.02)"/>
+        <ellipse cx="350" cy="60" rx="35" ry="15" fill="rgba(255,200,150,0.02)"/>
+        <ellipse cx="490" cy="65" rx="35" ry="15" fill="rgba(255,200,150,0.02)"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- =============================================
+     MATERIAL PALETTE
+     ============================================= -->
+<section class="pal-sec" id="vinyl">
+  <div class="sec-head" style="text-align:center;margin-bottom:10px">
+    <span class="sec-lbl rv">Materials</span>
+    <h2 class="sec-ttl rv" style="margin-bottom:15px">Design <em>Palette</em></h2>
+  </div>
+  <div class="pal-row rv d1">
+    <div class="pal-swatch" style="background:linear-gradient(135deg,#8b2800,#6b1a00)"><span>Oxblood Leather</span></div>
+    <div class="pal-swatch" style="background:linear-gradient(135deg,#b0b0b0,#787878)"><span>Polished Chrome</span></div>
+    <div class="pal-swatch" style="background:linear-gradient(135deg,#402510,#1e0f06)"><span>Dark Walnut</span></div>
+    <div class="pal-swatch" style="background:linear-gradient(135deg,#4d3020,#3a2418)"><span>Exposed Brick</span></div>
+    <div class="pal-swatch" style="background:linear-gradient(135deg,#cc0000,#ff1a1a);box-shadow:inset 0 0 15px rgba(255,26,26,.3)"><span>Neon Red</span></div>
+    <div class="pal-swatch" style="background-image:repeating-conic-gradient(#1a1a1a 0% 25%,#2a2a2a 0% 50%);background-size:14px 14px"><span>Checkered Tile</span></div>
+    <div class="pal-swatch" style="background:linear-gradient(135deg,#b08840,#8b6914)"><span>Brushed Brass</span></div>
+    <div class="pal-swatch" style="background:linear-gradient(135deg,#181818,#0a0a0a)"><span>Vinyl Black</span></div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <h2 class="rv">BUILD THE BLUES<br>WITH US</h2>
+  <p class="rv d1">Old North, Tel Aviv — 2026</p>
+  <div class="cta-btns rv d2">
+    <a class="btn b-r" href="#">Invest Now</a>
+    <a class="btn b-g" href="#">Full Pitch Deck</a>
+  </div>
+</section>
+
+<footer>
+  <div class="f-b">BLUES BURGER</div>
+  <div class="f-d">Interior Design Concept · Confidential · 2026</div>
+</footer>
+
+<script>
+const obs=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('v')})},{threshold:.1,rootMargin:'0px 0px -30px 0px'});
+document.querySelectorAll('.rv').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>

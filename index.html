@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blues Burger — Full Pitch Package</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900&family=Oswald:wght@200;300;400;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#050508;color:#f2ece0;font-family:'Oswald',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px}
+h1{font-family:'Playfair Display',serif;font-weight:900;font-size:3.5rem;letter-spacing:6px;text-transform:uppercase;text-align:center;line-height:1}
+h1 .w1{display:block;color:#f0c040;text-shadow:0 0 10px rgba(240,192,64,.4),0 0 30px rgba(240,192,64,.2)}
+h1 .w2{display:block;font-size:1.5rem;letter-spacing:14px;color:#ff1a1a;text-shadow:0 0 8px rgba(255,26,26,.3);margin-top:5px}
+.line{width:120px;height:2px;background:#f0c040;margin:25px auto;box-shadow:0 0 8px rgba(240,192,64,.4)}
+.sub{font-family:'Playfair Display',serif;font-style:italic;font-weight:400;font-size:1rem;opacity:.3;letter-spacing:3px;text-align:center;margin-bottom:50px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:15px;max-width:1000px;width:100%}
+.card{border:1px solid rgba(255,26,26,.08);padding:30px 25px;background:rgba(10,12,18,.6);transition:all .4s;text-decoration:none;color:#f2ece0;display:block;position:relative;overflow:hidden}
+.card:hover{border-color:#ff1a1a;transform:translateY(-5px);box-shadow:0 12px 30px rgba(255,26,26,.08)}
+.card::after{content:'';position:absolute;bottom:0;left:0;width:100%;height:3px;background:linear-gradient(90deg,#ff1a1a,#f0c040);transform:scaleX(0);transition:transform .4s}.card:hover::after{transform:scaleX(1)}
+.card .num{font-family:'Playfair Display',serif;font-weight:900;font-size:2.5rem;color:#ff1a1a;opacity:.12;line-height:1}
+.card h3{font-family:'Playfair Display',serif;font-weight:700;font-size:1.1rem;color:#f2ece0;margin:8px 0 6px;letter-spacing:1px}
+.card p{font-weight:200;font-size:.6rem;letter-spacing:2px;text-transform:uppercase;color:#f0c040;opacity:.35;line-height:1.6}
+.card .tag{display:inline-block;margin-top:10px;font-size:.5rem;letter-spacing:3px;text-transform:uppercase;padding:4px 10px;border:1px solid rgba(255,26,26,.15);color:#ff1a1a;opacity:.5}
+.footer{margin-top:60px;text-align:center;opacity:.1;font-size:.5rem;letter-spacing:4px;text-transform:uppercase}
+</style>
+</head>
+<body>
+<h1><span class="w1">Blues Burger</span><span class="w2">Pitch Package</span></h1>
+<div class="line"></div>
+<p class="sub">Old North, Tel Aviv — Opening 2026</p>
+
+<div class="grid">
+  <a class="card" href="website/index.html">
+    <div class="num">01</div>
+    <h3>Main Website</h3>
+    <p>The full animated landing page<br>Hanging neon sign · Floating music notes<br>Equalizer bars · Stage curtain reveal</p>
+    <span class="tag">Interactive</span>
+  </a>
+
+  <a class="card" href="street-3d/street-view.html">
+    <div class="num">02</div>
+    <h3>3D Street View</h3>
+    <p>Full city block at night<br>Rooftop spinning neon sign<br>Ugly neighbors · Cars · Street lamps</p>
+    <span class="tag">Three.js 3D</span>
+  </a>
+
+  <a class="card" href="interior-3d/restaurant-hd.html">
+    <div class="num">03</div>
+    <h3>3D Interior — HD</h3>
+    <p>Full restaurant in one space<br>Procedural textures · Neon glow<br>Booths · Bar · Stage · Kitchen · Vinyl</p>
+    <span class="tag">Three.js 3D</span>
+  </a>
+
+  <a class="card" href="interior-3d/full-floorplan.html">
+    <div class="num">04</div>
+    <h3>3D Full Floorplan</h3>
+    <p>Unified restaurant layout<br>All zones in one space<br>7 camera angles · Orbit controls</p>
+    <span class="tag">Three.js 3D</span>
+  </a>
+
+  <a class="card" href="care-package/unboxing-3d.html">
+    <div class="num">05</div>
+    <h3>3D Care Package Unboxing</h3>
+    <p>Vinyl burger box opens to cheeseburger<br>Amp fries box · Album sleeve · Guitar pick<br>Click to open each item</p>
+    <span class="tag">Three.js 3D · Interactive</span>
+  </a>
+
+  <a class="card" href="care-package/showcase.html">
+    <div class="num">06</div>
+    <h3>Care Package — SVG Showcase</h3>
+    <p>Detailed product illustrations<br>Vinyl box · Amp box · Album cover · Pick<br>Cost breakdown per unit</p>
+    <span class="tag">SVG Illustrations</span>
+  </a>
+
+  <a class="card" href="interior-design/vegas-neon-concept.html">
+    <div class="num">07</div>
+    <h3>Interior — Vegas Neon Style</h3>
+    <p>Fremont Street inspired storefront<br>Ornate gold scrollwork · Multi-color neon<br>Bar · Booths · Stage concepts</p>
+    <span class="tag">SVG Illustrations</span>
+  </a>
+
+  <a class="card" href="interior-design/gentleman-concept.html">
+    <div class="num">08</div>
+    <h3>Interior — Gentleman's Club</h3>
+    <p>Premium aesthetic concept<br>Brass & mahogany · Neon American flag<br>Route 66 · Cadillac silhouette</p>
+    <span class="tag">SVG Illustrations</span>
+  </a>
+
+  <a class="card" href="interior-design/full-concept.html">
+    <div class="num">09</div>
+    <h3>Interior — Full SVG Concept</h3>
+    <p>Detailed room illustrations<br>Storefront · Booths · Bar · Stage<br>Guitar wall · Material palette</p>
+    <span class="tag">SVG Illustrations</span>
+  </a>
+</div>
+
+<div class="footer">Blues Burger TLV · Confidential · 2026</div>
+</body>
+</html>

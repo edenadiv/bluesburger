@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blues Burger — Full 3D Floorplan</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900&family=Oswald:wght@200;300;400;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#050508;color:#f2ece0;font-family:'Oswald',sans-serif;overflow:hidden}
+#C{width:100vw;height:100vh;display:block}
+.top{position:fixed;top:18px;left:0;right:0;text-align:center;z-index:10;pointer-events:none}
+.brand{font-family:'Playfair Display',serif;font-weight:900;font-size:.8rem;letter-spacing:8px;text-transform:uppercase;color:#f0c040;text-shadow:0 0 12px rgba(240,192,64,.4)}
+.sub{font-weight:200;font-size:.38rem;letter-spacing:6px;text-transform:uppercase;color:#ff1a1a;opacity:.25;margin-top:2px}
+
+.cams{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:20}
+.cb{padding:10px 18px;font-family:'Oswald',sans-serif;font-weight:300;font-size:.5rem;letter-spacing:3px;text-transform:uppercase;border:1px solid rgba(255,26,26,.08);background:rgba(5,5,8,.92);color:#f2ece0;cursor:pointer;transition:all .3s;opacity:.35;backdrop-filter:blur(4px)}
+.cb:hover,.cb.on{border-color:#ff1a1a;color:#ff1a1a;opacity:1;box-shadow:0 0 15px rgba(255,26,26,.1)}
+
+.lbl{position:fixed;top:50%;right:25px;transform:translateY(-50%);text-align:right;z-index:10;pointer-events:none;transition:opacity .4s}
+.lbl h2{font-family:'Playfair Display',serif;font-weight:900;font-size:1.8rem;color:#ff1a1a;text-shadow:0 0 10px rgba(255,26,26,.2);line-height:1.1}
+.lbl p{font-weight:200;font-size:.45rem;letter-spacing:3px;text-transform:uppercase;color:#f0c040;opacity:.25;margin-top:5px;line-height:1.7}
+
+.hint{position:fixed;bottom:62px;left:50%;transform:translateX(-50%);font-weight:200;font-size:.38rem;letter-spacing:5px;text-transform:uppercase;opacity:.1;z-index:10;pointer-events:none}
+
+@media(max-width:768px){.lbl{right:10px;top:auto;bottom:110px;transform:none;text-align:center;left:10px}.lbl h2{font-size:1.3rem}.cams{flex-wrap:wrap;justify-content:center;width:96%}.cb{padding:7px 12px;font-size:.42rem}}
+</style>
+</head>
+<body>
+<canvas id="C"></canvas>
+<div class="top"><div class="brand">Blues Burger</div><div class="sub">Full Restaurant · 3D Interior</div></div>
+<div class="lbl" id="LBL"><h2 id="LN">Full View</h2><p id="LD">The complete Blues Burger restaurant<br>Old North, Tel Aviv</p></div>
+<div class="cams">
+<button class="cb on" data-i="0">Overview</button>
+<button class="cb" data-i="1">Booths</button>
+<button class="cb" data-i="2">Bar</button>
+<button class="cb" data-i="3">Stage</button>
+<button class="cb" data-i="4">Guitar Wall</button>
+<button class="cb" data-i="5">Kitchen</button>
+<button class="cb" data-i="6">Vinyl Corner</button>
+</div>
+<div class="hint">Drag to orbit · Scroll to zoom · Click zones to explore</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+var canvas=document.getElementById('C');
+var scene=new THREE.Scene();
+scene.fog=new THREE.FogExp2(0x050508,0.018);
+var cam=new THREE.PerspectiveCamera(50,innerWidth/innerHeight,0.1,200);
+
+var ren=new THREE.WebGLRenderer({canvas:canvas,antialias:true});
+ren.setSize(innerWidth,innerHeight);
+ren.setPixelRatio(Math.min(devicePixelRatio,2));
+ren.toneMapping=THREE.ACESFilmicToneMapping;
+ren.toneMappingExposure=1.3;
+ren.shadowMap.enabled=true;
+ren.shadowMap.type=THREE.PCFSoftShadowMap;
+
+/* ===== MATERIALS ===== */
+var M={
+  brick:new THREE.MeshStandardMaterial({color:0x3a2418,roughness:0.85}),
+  brick2:new THREE.MeshStandardMaterial({color:0x4a2e1e,roughness:0.82}),
+  floor1:new THREE.MeshStandardMaterial({color:0x1a1a1a,roughness:0.55,metalness:0.1}),
+  floor2:new THREE.MeshStandardMaterial({color:0x262626,roughness:0.55,metalness:0.1}),
+  ceil:new THREE.MeshStandardMaterial({color:0x0a0a0a,roughness:0.95}),
+  leather:new THREE.MeshStandardMaterial({color:0x6b1a00,roughness:0.4,metalness:0.15}),
+  leather2:new THREE.MeshStandardMaterial({color:0x8b2800,roughness:0.35}),
+  wood:new THREE.MeshStandardMaterial({color:0x2a1608,roughness:0.6}),
+  woodTop:new THREE.MeshStandardMaterial({color:0x3e200c,roughness:0.3,metalness:0.15}),
+  chrome:new THREE.MeshStandardMaterial({color:0xc0c0c0,roughness:0.1,metalness:0.95}),
+  brass:new THREE.MeshStandardMaterial({color:0xb08840,roughness:0.2,metalness:0.85}),
+  dark:new THREE.MeshStandardMaterial({color:0x080808,roughness:0.9}),
+  nR:new THREE.MeshStandardMaterial({color:0xff1a1a,emissive:0xff1a1a,emissiveIntensity:1.0,roughness:0.05}),
+  nG:new THREE.MeshStandardMaterial({color:0xf0c040,emissive:0xf0c040,emissiveIntensity:0.8,roughness:0.05}),
+  nB:new THREE.MeshStandardMaterial({color:0x4fc3f7,emissive:0x4fc3f7,emissiveIntensity:0.6,roughness:0.05}),
+  nGr:new THREE.MeshStandardMaterial({color:0x44ff88,emissive:0x44ff88,emissiveIntensity:0.5,roughness:0.05}),
+  nPk:new THREE.MeshStandardMaterial({color:0xff6eb4,emissive:0xff6eb4,emissiveIntensity:0.5,roughness:0.05}),
+  amp:new THREE.MeshStandardMaterial({color:0x151515,roughness:0.6,metalness:0.2}),
+  steel:new THREE.MeshStandardMaterial({color:0x888888,roughness:0.2,metalness:0.9}),
+  gBody:new THREE.MeshStandardMaterial({color:0x5c2000,roughness:0.4,metalness:0.2}),
+  gRed:new THREE.MeshStandardMaterial({color:0x8b0000,roughness:0.35,metalness:0.25}),
+  gGold:new THREE.MeshStandardMaterial({color:0xdaa520,roughness:0.3,metalness:0.4}),
+  vinyl:new THREE.MeshStandardMaterial({color:0x080808,roughness:0.2,metalness:0.8}),
+  label:new THREE.MeshStandardMaterial({color:0x6b0000,roughness:0.35,emissive:0xff1a1a,emissiveIntensity:0.08}),
+  stage:new THREE.MeshStandardMaterial({color:0x2e1a0c,roughness:0.65}),
+  glass:new THREE.MeshStandardMaterial({color:0x88bbdd,roughness:0.02,metalness:0.2,transparent:true,opacity:0.12}),
+  white:new THREE.MeshStandardMaterial({color:0xdddddd,roughness:0.4}),
+  fridge:new THREE.MeshStandardMaterial({color:0xc0c0c0,roughness:0.15,metalness:0.9}),
+};
+
+function bx(w,h,d,m){return new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);}
+function cy(rT,rB,h,s,m){return new THREE.Mesh(new THREE.CylinderGeometry(rT,rB,h,s),m);}
+function tor(r,t,m){var o=new THREE.Mesh(new THREE.TorusGeometry(r,t,12,64),m);o.rotation.x=Math.PI/2;return o;}
+
+/* =============================================
+   THE RESTAURANT — 18m x 12m rectangle
+   Layout (top-down, Z is depth, X is width):
+   
+   Back wall (Z = -6):
+     Left: STAGE         Right: GUITAR WALL
+   
+   Left wall (X = -9):
+     BAR runs along this wall
+   
+   Right wall (X = +9):
+     KITCHEN behind a counter
+   
+   Center:
+     BOOTH SEATING (3 booth pairs)
+   
+   Front (Z = +6):
+     ENTRANCE with VINYL CORNER near door
+   
+   ============================================= */
+
+var restaurant=new THREE.Group();
+
+/* ----- FLOOR — checkered tiles ----- */
+var tS=0.6;
+for(var ix=0;ix<30;ix++){
+  for(var iz=0;iz<20;iz++){
+    var fm=(ix+iz)%2===0?M.floor1:M.floor2;
+    var tile=bx(tS,0.06,tS,fm);
+    tile.position.set(-9+ix*tS+tS/2,0.03,-6+iz*tS+tS/2);
+    tile.receiveShadow=true;
+    restaurant.add(tile);
+  }
+}
+
+/* ----- WALLS ----- */
+// Back wall
+restaurant.add(bx(18,4.5,0.3,M.brick).translateY(2.25).translateZ(-6.15));
+// Front wall (with gap for door)
+restaurant.add(bx(6.5,4.5,0.3,M.brick).translateX(-5.75).translateY(2.25).translateZ(6.15));
+restaurant.add(bx(6.5,4.5,0.3,M.brick).translateX(5.75).translateY(2.25).translateZ(6.15));
+restaurant.add(bx(5,1.5,0.3,M.brick).translateY(3.75).translateZ(6.15)); // above door
+// Left wall
+restaurant.add(bx(0.3,4.5,12,M.brick2).translateX(-9.15).translateY(2.25));
+// Right wall
+restaurant.add(bx(0.3,4.5,12,M.brick2).translateX(9.15).translateY(2.25));
+// Ceiling
+restaurant.add(bx(18,0.1,12,M.ceil).translateY(4.5));
+
+/* ----- ENTRANCE DOOR ----- */
+restaurant.add(bx(2.5,3.5,0.08,new THREE.MeshStandardMaterial({color:0x111118,roughness:0.3})).translateY(1.75).translateZ(6.1));
+// Door frame brass
+restaurant.add(bx(2.7,3.7,0.04,M.brass).translateY(1.85).translateZ(6.12));
+// Glass panels
+restaurant.add(bx(1.1,2.4,0.03,M.glass).translateX(-0.55).translateY(1.8).translateZ(6.12));
+restaurant.add(bx(1.1,2.4,0.03,M.glass).translateX(0.55).translateY(1.8).translateZ(6.12));
+
+/* =============================================
+   NEON SIGN above entrance (inside, facing in)
+   ============================================= */
+restaurant.add(bx(3.5,0.08,0.06,M.nR).translateY(3.8).translateZ(5.8));
+restaurant.add(bx(2.0,0.06,0.06,M.nG).translateY(3.6).translateZ(5.8));
+var entNL=new THREE.PointLight(0xff1a1a,1.5,6);entNL.position.set(0,3.8,5);restaurant.add(entNL);
+var entNL2=new THREE.PointLight(0xf0c040,0.6,4);entNL2.position.set(0,3.6,5);restaurant.add(entNL2);
+
+/* =============================================
+   BOOTH AREA — center of restaurant
+   3 pairs of facing booths
+   ============================================= */
+function mkBooth(bx2,bz,faceDir){
+  var b=new THREE.Group();
+  // Back cushion
+  var backW=faceDir>0?-1.1:1.1;
+  b.add(bx(0.3,1.6,1.8,M.leather).translateX(backW).translateY(1.0));
+  // Tufting buttons
+  for(var i=0;i<4;i++){
+    b.add(cy(0.035,0.035,0.02,8,M.brass).rotateZ(Math.PI/2).translateX(faceDir>0?-0.95:0.95).translateY(0.4+i*0.35));
+  }
+  // Seat
+  b.add(bx(1.5,0.22,1.8,M.leather2).translateX(faceDir>0?-0.25:0.25).translateY(0.52));
+  // Chrome trim
+  b.add(bx(1.5,0.035,1.85,M.chrome).translateX(faceDir>0?-0.25:0.25).translateY(0.42));
+  b.position.set(bx2,0,bz);
+  return b;
+}
+
+function mkBoothPair(cx2,cz){
+  var g=new THREE.Group();
+  g.add(mkBooth(-1.6,0,1)); // left seat
+  g.add(mkBooth(1.6,0,-1)); // right seat
+  // Table
+  g.add(bx(1.5,0.07,1.3,M.woodTop).translateY(0.95));
+  g.add(bx(1.55,0.03,1.35,M.brass).translateY(0.985));
+  g.add(cy(0.07,0.1,0.85,8,M.chrome).translateY(0.48));
+  g.add(cy(0.3,0.3,0.04,16,M.chrome).translateY(0.04));
+  // Pendant light
+  g.add(cy(0.01,0.01,1.2,6,M.dark).translateY(3.9));
+  g.add(cy(0.2,0.12,0.15,8,M.brass).translateY(3.25));
+  var pl=new THREE.PointLight(0xffaa44,0.6,4);pl.position.y=3.2;pl.castShadow=true;g.add(pl);
+  g.add(new THREE.Mesh(new THREE.SphereGeometry(0.04,8,8),new THREE.MeshStandardMaterial({color:0xffcc66,emissive:0xffcc66,emissiveIntensity:1})).translateY(3.2));
+  // Partition walls
+  g.add(bx(2.8,2,0.08,M.wood).translateY(1).translateZ(0.95));
+  g.add(bx(2.8,2,0.08,M.wood).translateY(1).translateZ(-0.95));
+  g.position.set(cx2,0,cz);
+  return g;
+}
+
+restaurant.add(mkBoothPair(0,-2));
+restaurant.add(mkBoothPair(0,0.5));
+restaurant.add(mkBoothPair(0,3));
+
+/* =============================================
+   BAR — along LEFT WALL (X = -9)
+   ============================================= */
+// Bar counter
+restaurant.add(bx(0.9,0.12,8,M.woodTop).translateX(-7).translateY(1.12));
+restaurant.add(bx(0.95,0.04,8.05,M.brass).translateX(-7).translateY(1.18));
+// Bar front panel
+restaurant.add(bx(0.12,1.05,8,M.wood).translateX(-6.5).translateY(0.55));
+// Foot rail
+restaurant.add(cy(0.025,0.025,8,8,M.brass).rotateX(Math.PI/2).translateX(-6.45).translateY(0.18));
+
+// Bar stools
+for(var bs=-3;bs<=3;bs+=1.2){
+  var st=new THREE.Group();
+  st.add(cy(0.18,0.18,0.05,16,M.chrome).translateY(0.88));
+  st.add(cy(0.035,0.05,0.78,8,M.chrome).translateY(0.46));
+  st.add(cy(0.22,0.22,0.03,16,M.chrome).translateY(0.04));
+  st.position.set(-5.8,0,bs);
+  restaurant.add(st);
+}
+
+// Back bar shelves + mirror
+restaurant.add(bx(0.05,2.8,7,new THREE.MeshStandardMaterial({color:0x0c0c16,roughness:0.05,metalness:0.8})).translateX(-8.8).translateY(2.2));
+restaurant.add(bx(0.5,0.05,7,M.woodTop).translateX(-8.5).translateY(1.7));
+restaurant.add(bx(0.5,0.05,7,M.woodTop).translateX(-8.5).translateY(2.5));
+
+// Bottles on shelves
+var bottleColors=[0x5c3000,0x1a4a1a,0x5c1a1a,0x7a5000,0x2a2a3a,0x3a2000,0x4a3a1a,0x1a2a5c,0x6b3000,0x5c2020,0x4a4a1a,0x3a5c1a,0x7a4a00,0x2a2a4a,0x5c3a20];
+for(var bi=0;bi<15;bi++){
+  var bCol=bottleColors[bi%bottleColors.length];
+  var bH=0.35+Math.random()*0.25;
+  var bW=0.04+Math.random()*0.02;
+  var bMat=new THREE.MeshStandardMaterial({color:bCol,roughness:0.2,metalness:0.3});
+  var bottle=cy(bW,bW,bH,6,bMat);
+  bottle.position.set(-8.35,1.74+bH/2,-3+bi*0.45);
+  restaurant.add(bottle);
+  // Neck
+  restaurant.add(cy(bW*0.4,bW*0.4,bH*0.22,6,bMat).translateX(-8.35).translateY(1.74+bH+bH*0.11).translateZ(-3+bi*0.45));
+}
+// Top shelf bottles
+for(var bi2=0;bi2<12;bi2++){
+  var bCol2=bottleColors[(bi2+5)%bottleColors.length];
+  var bH2=0.3+Math.random()*0.25;
+  var bW2=0.04+Math.random()*0.015;
+  var bMat2=new THREE.MeshStandardMaterial({color:bCol2,roughness:0.2,metalness:0.3});
+  restaurant.add(cy(bW2,bW2,bH2,6,bMat2).translateX(-8.35).translateY(2.54+bH2/2).translateZ(-2.5+bi2*0.5));
+}
+
+// Beer taps
+for(var ti=-0.5;ti<=0.5;ti+=0.35){
+  restaurant.add(cy(0.025,0.025,0.28,8,M.brass).translateX(-7.8).translateY(1.4).translateZ(ti));
+  restaurant.add(cy(0.05,0.035,0.08,8,M.brass).translateX(-7.8).translateY(1.26).translateZ(ti));
+}
+
+// NEON "BOURBON" sign above bar
+restaurant.add(bx(2.5,0.07,0.05,M.nG).translateX(-8.5).translateY(3.5).translateZ(0));
+// Scrollwork
+restaurant.add(new THREE.Mesh(new THREE.TorusGeometry(0.25,0.02,8,16,Math.PI),M.nG).translateX(-8.5).translateY(3.5).translateZ(-1.5).rotateY(Math.PI/2));
+restaurant.add(new THREE.Mesh(new THREE.TorusGeometry(0.25,0.02,8,16,Math.PI),M.nG).translateX(-8.5).translateY(3.5).translateZ(1.5).rotateY(Math.PI/2).rotateX(Math.PI));
+// Red underline
+restaurant.add(bx(2,0.04,0.04,M.nR).translateX(-8.5).translateY(3.3).translateZ(0));
+var barNL=new THREE.PointLight(0xf0c040,2,7);barNL.position.set(-8,3.5,0);restaurant.add(barNL);
+var barRL=new THREE.PointLight(0xff1a1a,0.5,4);barRL.position.set(-8,3.3,0);restaurant.add(barRL);
+
+// Green neon stars along bar ceiling
+for(var gsi=-3;gsi<=3;gsi+=0.8){
+  restaurant.add(new THREE.Mesh(new THREE.SphereGeometry(0.03,6,6),M.nGr).translateX(-8.8).translateY(4.3).translateZ(gsi));
+}
+restaurant.add(new THREE.PointLight(0x44ff88,0.3,5).translateX(-8.5).translateY(4.3));
+
+/* =============================================
+   GUITAR WALL — back right (Z = -6, X = 3 to 9)
+   ============================================= */
+function mkGtr(gx,gy,gz,rot,bodyM,acoustic){
+  var gg=new THREE.Group();
+  if(acoustic){
+    gg.add(cy(0.3,0.3,0.08,12,bodyM));
+    gg.add(cy(0.22,0.22,0.08,12,bodyM).translateY(0.35));
+    gg.add(new THREE.Mesh(new THREE.TorusGeometry(0.1,0.012,8,20),M.dark).translateZ(0.05));
+  } else {
+    gg.add(cy(0.25,0.25,0.08,12,bodyM));
+    gg.add(cy(0.2,0.2,0.08,12,bodyM).translateY(0.28));
+    gg.add(bx(0.16,0.05,0.06,M.dark).translateZ(0.05));
+    gg.add(bx(0.16,0.05,0.06,M.dark).translateY(0.12).translateZ(0.05));
+  }
+  gg.add(bx(0.06,0.7,0.04,M.wood).translateY(0.7));
+  gg.add(bx(0.1,0.16,0.04,bodyM).translateY(1.1));
+  for(var s=-0.02;s<=0.02;s+=0.01){gg.add(bx(0.002,1.0,0.002,M.chrome).translateX(s).translateY(0.45).translateZ(0.05));}
+  gg.add(bx(0.12,0.035,0.12,M.chrome).translateY(0.5).translateZ(-0.04));
+  gg.rotation.z=rot;gg.position.set(gx,gy,gz);
+  return gg;
+}
+
+// Row 1 — upper
+restaurant.add(mkGtr(4,3.0,-5.75,-0.25,M.gBody,true));
+restaurant.add(mkGtr(5.3,3.2,-5.75,0.15,M.gRed,false));
+restaurant.add(mkGtr(6.6,2.9,-5.75,-0.2,M.gGold,false));
+restaurant.add(mkGtr(7.9,3.1,-5.75,0.3,M.gBody,true));
+// Row 2 — lower
+restaurant.add(mkGtr(4.5,1.5,-5.75,-0.3,M.gRed,false));
+restaurant.add(mkGtr(5.8,1.3,-5.75,0.2,new THREE.MeshStandardMaterial({color:0x1a1a1a,roughness:0.3,metalness:0.6}),false));
+restaurant.add(mkGtr(7.1,1.6,-5.75,0.25,M.gBody,true));
+restaurant.add(mkGtr(8.3,1.4,-5.75,-0.15,M.gGold,false));
+
+// Neon "BLUES" between rows
+restaurant.add(bx(2.5,0.07,0.05,M.nR).translateX(6.2).translateY(2.2).translateZ(-5.85));
+var gwNL=new THREE.PointLight(0xff1a1a,1.5,5);gwNL.position.set(6.2,2.2,-5);restaurant.add(gwNL);
+
+// Gold neon frame around guitar wall
+restaurant.add(bx(5.5,0.04,0.04,M.nG).translateX(6.2).translateY(3.8).translateZ(-5.85));
+restaurant.add(bx(5.5,0.04,0.04,M.nG).translateX(6.2).translateY(0.5).translateZ(-5.85));
+restaurant.add(bx(0.04,3.3,0.04,M.nG).translateX(3.4).translateY(2.15).translateZ(-5.85));
+restaurant.add(bx(0.04,3.3,0.04,M.nG).translateX(9.0).translateY(2.15).translateZ(-5.85));
+var gfNL=new THREE.PointLight(0xf0c040,0.5,4);gfNL.position.set(6.2,3.8,-5);restaurant.add(gfNL);
+
+// B.B. King frame
+restaurant.add(bx(0.6,0.8,0.04,new THREE.MeshStandardMaterial({color:0x111,roughness:0.5})).translateX(6.2).translateY(2.2).translateZ(-5.9));
+restaurant.add(bx(0.35,0.05,0.02,M.brass).translateX(6.2).translateY(1.75).translateZ(-5.88));
+
+/* =============================================
+   CORNER STAGE — back left (Z = -6, X = -9 to -4)
+   ============================================= */
+// Stage platform
+restaurant.add(bx(5,0.35,3.5,M.stage).translateX(-6.5).translateY(0.18).translateZ(-4));
+restaurant.add(bx(5.05,0.05,0.05,M.brass).translateX(-6.5).translateY(0.37).translateZ(-2.25));
+
+// Gold neon proscenium arch
+var arch=new THREE.Mesh(new THREE.TorusGeometry(2.8,0.04,8,32,Math.PI),M.nG);
+arch.position.set(-6.5,4.0,-5.85);restaurant.add(arch);
+restaurant.add(bx(0.04,3.5,0.04,M.nG).translateX(-9.3).translateY(2.1).translateZ(-5.85));
+restaurant.add(bx(0.04,3.5,0.04,M.nG).translateX(-3.7).translateY(2.1).translateZ(-5.85));
+var archNL=new THREE.PointLight(0xf0c040,0.8,6);archNL.position.set(-6.5,4.0,-4.5);restaurant.add(archNL);
+
+// "LIVE" neon
+restaurant.add(bx(1.0,0.07,0.05,M.nR).translateX(-6.5).translateY(3.6).translateZ(-5.8));
+var liveNL=new THREE.PointLight(0xff1a1a,1.5,5);liveNL.position.set(-6.5,3.6,-4.5);restaurant.add(liveNL);
+
+// Spotlight
+var spot=new THREE.SpotLight(0xff2222,2.5,10,Math.PI/7,0.4);
+spot.position.set(-6.5,4.4,-1);spot.target.position.set(-6.5,0.5,-4);spot.castShadow=true;
+restaurant.add(spot);restaurant.add(spot.target);
+restaurant.add(bx(0.35,0.18,0.25,M.dark).translateX(-6.5).translateY(4.4).translateZ(-1));
+restaurant.add(new THREE.Mesh(new THREE.SphereGeometry(0.05,8,8),M.nR).translateX(-6.5).translateY(4.3).translateZ(-1));
+
+// Microphone
+restaurant.add(cy(0.015,0.025,1.3,8,M.chrome).translateX(-6.5).translateY(1.0).translateZ(-4.2));
+restaurant.add(new THREE.Mesh(new THREE.SphereGeometry(0.05,12,8),M.chrome).translateX(-6.5).translateY(1.7).translateZ(-4.2));
+restaurant.add(cy(0.12,0.12,0.025,16,M.chrome).translateX(-6.5).translateY(0.37).translateZ(-4.2));
+
+// Amps
+function mkAmpB(ax2,az){
+  var ab=new THREE.Group();
+  ab.add(bx(0.6,0.5,0.4,M.amp));
+  ab.add(new THREE.Mesh(new THREE.TorusGeometry(0.15,0.015,8,20),M.chrome).translateZ(0.21));
+  ab.add(new THREE.Mesh(new THREE.SphereGeometry(0.015,6,6),M.nR).translateY(0.22).translateZ(0.21));
+  ab.position.set(ax2,0.62,az);
+  return ab;
+}
+restaurant.add(mkAmpB(-8,-5.2));
+restaurant.add(mkAmpB(-5,-5.2));
+
+// Guitar on stand
+restaurant.add(cy(0.25,0.25,0.06,10,M.gBody).translateX(-5.2).translateY(0.8).translateZ(-4.8));
+restaurant.add(cy(0.18,0.18,0.06,10,M.gBody).translateX(-5.2).translateY(1.15).translateZ(-4.8));
+restaurant.add(bx(0.05,0.55,0.03,M.wood).translateX(-5.2).translateY(1.5).translateZ(-4.8));
+restaurant.add(cy(0.012,0.012,0.8,6,M.chrome).translateX(-5.2).translateY(0.3).translateZ(-4.65));
+
+// Green neon guitar on back wall
+restaurant.add(new THREE.Mesh(new THREE.TorusGeometry(0.3,0.02,8,20),M.nGr).translateX(-8).translateY(2.5).translateZ(-5.85));
+restaurant.add(new THREE.Mesh(new THREE.TorusGeometry(0.22,0.018,8,16),M.nGr).translateX(-8).translateY(2.9).translateZ(-5.85));
+restaurant.add(bx(0.035,0.6,0.035,M.nGr).translateX(-8).translateY(3.3).translateZ(-5.85));
+var gNeonL=new THREE.PointLight(0x44ff88,0.4,3);gNeonL.position.set(-8,2.7,-5);restaurant.add(gNeonL);
+
+// Monitor wedge
+restaurant.add(bx(0.7,0.15,0.35,M.amp).translateX(-6.5).translateY(0.44).translateZ(-3));
+
+/* =============================================
+   KITCHEN — right wall (X = 7 to 9)
+   ============================================= */
+// Service counter
+restaurant.add(bx(0.8,1.1,6,M.steel).translateX(7.2).translateY(0.55));
+restaurant.add(bx(0.85,0.06,6.05,M.woodTop).translateX(7.2).translateY(1.12));
+
+// Pass-through window/shelf
+restaurant.add(bx(0.1,0.6,4,M.steel).translateX(7.7).translateY(1.8));
+
+// Kitchen equipment behind counter
+// Flat-top grill
+restaurant.add(bx(1.2,0.8,0.8,M.steel).translateX(8.3).translateY(0.7).translateZ(-1));
+// Grill surface (dark/hot)
+restaurant.add(bx(1.1,0.02,0.7,new THREE.MeshStandardMaterial({color:0x333333,roughness:0.3,metalness:0.7})).translateX(8.3).translateY(1.12).translateZ(-1));
+// Warm glow from grill
+restaurant.add(new THREE.PointLight(0xff6633,0.4,2).translateX(8.3).translateY(1.2).translateZ(-1));
+
+// Fridge
+restaurant.add(bx(0.7,2,0.7,M.fridge).translateX(8.5).translateY(1).translateZ(1.5));
+restaurant.add(bx(0.04,0.3,0.03,M.chrome).translateX(8.14).translateY(1.2).translateZ(1.5));
+
+// Prep table
+restaurant.add(bx(1.2,0.8,0.6,M.steel).translateX(8.3).translateY(0.7).translateZ(0.3));
+
+// Hood vent above grill
+restaurant.add(bx(1.4,0.15,1,M.steel).translateX(8.3).translateY(2.5).translateZ(-1));
+
+// Neon "ORDER UP" small sign
+restaurant.add(bx(1.2,0.05,0.04,M.nR).translateX(7.7).translateY(2.3));
+restaurant.add(new THREE.PointLight(0xff1a1a,0.3,2).translateX(7.7).translateY(2.3).translateZ(0.5));
+
+/* =============================================
+   VINYL CORNER — near entrance, front-right
+   ============================================= */
+// Turntable table
+restaurant.add(bx(1.2,0.8,0.6,M.woodTop).translateX(5).translateY(0.4).translateZ(4.5));
+// Turntable
+restaurant.add(cy(0.35,0.35,0.04,32,M.vinyl).translateX(5).translateY(0.84).translateZ(4.5));
+// Record on turntable
+restaurant.add(cy(0.3,0.3,0.02,32,M.dark).translateX(5).translateY(0.87).translateZ(4.5));
+restaurant.add(cy(0.08,0.08,0.025,16,M.label).translateX(5).translateY(0.88).translateZ(4.5));
+restaurant.add(tor(0.09,0.005,M.nG).translateX(5).translateY(0.89).translateZ(4.5));
+
+// Record shelf
+restaurant.add(bx(0.4,1.5,1.2,M.wood).translateX(6.5).translateY(0.75).translateZ(4.5));
+// Record spines
+var spineColors=[0x8b0000,0x1a3a5c,0x4a3000,0x2a1a3a,0x5c3a00,0x1a5c1a,0x5c1a1a,0x3a3a1a];
+for(var ri=0;ri<8;ri++){
+  restaurant.add(bx(0.02,0.35,0.005,new THREE.MeshStandardMaterial({color:spineColors[ri]})).translateX(6.5).translateY(0.4+ri*0.12).translateZ(4.1));
+}
+
+// Blue neon accent above vinyl corner
+restaurant.add(bx(2,0.04,0.04,M.nB).translateX(5.5).translateY(2).translateZ(4.8));
+restaurant.add(new THREE.PointLight(0x4fc3f7,0.5,3).translateX(5.5).translateY(2).translateZ(4.5));
+
+// NEON "OPEN" pink sign near entrance
+restaurant.add(bx(0.8,0.04,0.04,M.nPk).translateX(-3).translateY(2.5).translateZ(5.8));
+restaurant.add(new THREE.PointLight(0xff6eb4,0.4,2.5).translateX(-3).translateY(2.5).translateZ(5.5));
+
+/* =============================================
+   ROUTE 66 SHIELD — blue neon near entrance
+   ============================================= */
+var r66=new THREE.Group();
+// Shield outline
+r66.add(bx(0.6,0.04,0.04,M.nB).translateY(0.35));
+r66.add(bx(0.6,0.04,0.04,M.nB).translateY(-0.35));
+r66.add(bx(0.04,0.7,0.04,M.nB).translateX(-0.3));
+r66.add(bx(0.04,0.7,0.04,M.nB).translateX(0.3));
+// Top triangle
+r66.add(bx(0.3,0.04,0.04,M.nB).translateY(0.4).rotateZ(0.3).translateX(-0.1));
+r66.add(bx(0.3,0.04,0.04,M.nB).translateY(0.4).rotateZ(-0.3).translateX(0.1));
+r66.position.set(3,2.5,5.85);
+restaurant.add(r66);
+restaurant.add(new THREE.PointLight(0x4fc3f7,0.3,2).translateX(3).translateY(2.5).translateZ(5.5));
+
+/* ===== ADD RESTAURANT TO SCENE ===== */
+scene.add(restaurant);
+
+/* ===== GLOBAL LIGHTS ===== */
+scene.add(new THREE.AmbientLight(0x0a0a15,0.5));
+// Overhead general
+var overL=new THREE.PointLight(0xffaa66,0.3,20);overL.position.set(0,4,0);scene.add(overL);
+
+/* ===== CAMERA PRESETS ===== */
+var camPresets=[
+  {x:0,y:14,z:16,lx:0,ly:0,lz:0,name:'Full View',desc:'The complete Blues Burger restaurant<br>Old North, Tel Aviv'},
+  {x:0,y:3,z:3.5,lx:0,ly:1.5,lz:0,name:'The Booths',desc:'Red leather · Brass pendants<br>Checkered floor · Neon on brick'},
+  {x:-6,y:2.5,z:2,lx:-8,ly:2,lz:0,name:'Bourbon Bar',desc:'20+ bottles · Chrome stools<br>Gold neon sign · Brass foot rail'},
+  {x:-6,y:2.5,z:-1,lx:-6.5,ly:1.5,lz:-4,name:'Corner Stage',desc:'Gold proscenium arch · Spotlight<br>Tube amps · Green neon guitar'},
+  {x:6,y:2.5,z:-2,lx:6.2,ly:2,lz:-5.5,name:'Guitar Wall',desc:'8 mounted guitars · Gold frame<br>B.B. King tribute · Red neon'},
+  {x:8,y:2.5,z:1,lx:8.3,ly:1,lz:0,name:'Open Kitchen',desc:'Flat-top grill · Pass-through<br>Stainless steel · "Order Up" neon'},
+  {x:5.5,y:2,z:5,lx:5.5,ly:1,lz:4.5,name:'Vinyl Corner',desc:'Restored turntable · Record shelf<br>Blue neon accent'},
+];
+
+var curCam=0;
+var camTarget={x:camPresets[0].x,y:camPresets[0].y,z:camPresets[0].z};
+var lookTarget={x:camPresets[0].lx,y:camPresets[0].ly,z:camPresets[0].lz};
+var camCur={x:camPresets[0].x,y:camPresets[0].y,z:camPresets[0].z};
+var lookCur={x:camPresets[0].lx,y:camPresets[0].ly,z:camPresets[0].lz};
+
+/* ===== TAB SWITCHING ===== */
+var LN=document.getElementById('LN'),LD=document.getElementById('LD'),LBL=document.getElementById('LBL');
+var cbs=document.querySelectorAll('.cb');
+
+function goTo(idx){
+  if(idx===curCam)return;
+  curCam=idx;
+  var p=camPresets[idx];
+  camTarget={x:p.x,y:p.y,z:p.z};
+  lookTarget={x:p.lx,y:p.ly,z:p.lz};
+  LBL.style.opacity='0';
+  setTimeout(function(){
+    LN.innerHTML=p.name;LD.innerHTML=p.desc;
+    LBL.style.opacity='1';
+  },300);
+  cbs.forEach(function(c){c.classList.remove('on');});cbs[idx].classList.add('on');
+}
+cbs.forEach(function(c){c.addEventListener('click',function(){goTo(+c.dataset.i);});});
+setTimeout(function(){LBL.style.opacity='1';},500);
+
+/* ===== ORBIT DRAG (overrides preset smoothly) ===== */
+var drag=false,pm={x:0,y:0};
+var orbitY=0,orbitX=0;
+canvas.addEventListener('pointerdown',function(e){drag=true;pm={x:e.clientX,y:e.clientY};});
+canvas.addEventListener('pointermove',function(e){
+  if(!drag)return;
+  orbitY+=(e.clientX-pm.x)*0.003;
+  orbitX+=(e.clientY-pm.y)*0.003;
+  orbitX=Math.max(-0.5,Math.min(0.8,orbitX));
+  pm={x:e.clientX,y:e.clientY};
+  // Override camera target with orbit offset
+  var p=camPresets[curCam];
+  var dist=Math.sqrt((p.x-p.lx)**2+(p.z-p.lz)**2);
+  if(dist<1)dist=5;
+  camTarget.x=p.lx+Math.sin(orbitY)*dist;
+  camTarget.z=p.lz+Math.cos(orbitY)*dist;
+  camTarget.y=p.y+orbitX*3;
+});
+canvas.addEventListener('pointerup',function(){drag=false;});
+canvas.addEventListener('pointerleave',function(){drag=false;});
+canvas.addEventListener('wheel',function(e){
+  // Zoom by moving camera closer/further
+  var dx=camTarget.x-lookTarget.x;
+  var dz=camTarget.z-lookTarget.z;
+  var dy=camTarget.y-lookTarget.y;
+  var len=Math.sqrt(dx*dx+dy*dy+dz*dz);
+  var factor=1+e.deltaY*0.001;
+  factor=Math.max(0.3,Math.min(3,factor));
+  var newLen=Math.max(2,Math.min(25,len*factor));
+  camTarget.x=lookTarget.x+dx/len*newLen;
+  camTarget.y=lookTarget.y+dy/len*newLen;
+  camTarget.z=lookTarget.z+dz/len*newLen;
+},{passive:true});
+
+/* ===== RENDER LOOP ===== */
+var clock=new THREE.Clock();
+var elapsed2=0;
+function loop(){
+  requestAnimationFrame(loop);
+  var dt=Math.min(clock.getDelta(),0.05);
+  elapsed2+=dt;
+
+  // Smooth camera movement
+  camCur.x+=(camTarget.x-camCur.x)*0.04;
+  camCur.y+=(camTarget.y-camCur.y)*0.04;
+  camCur.z+=(camTarget.z-camCur.z)*0.04;
+  lookCur.x+=(lookTarget.x-lookCur.x)*0.04;
+  lookCur.y+=(lookTarget.y-lookCur.y)*0.04;
+  lookCur.z+=(lookTarget.z-lookCur.z)*0.04;
+
+  cam.position.set(camCur.x,camCur.y,camCur.z);
+  cam.lookAt(lookCur.x,lookCur.y,lookCur.z);
+
+  // Subtle light animation
+  overL.intensity=0.3+Math.sin(elapsed2*0.5)*0.05;
+
+  ren.render(scene,cam);
+}
+loop();
+
+window.addEventListener('resize',function(){
+  cam.aspect=innerWidth/innerHeight;
+  cam.updateProjectionMatrix();
+  ren.setSize(innerWidth,innerHeight);
+});
+</script>
+</body>
+</html>

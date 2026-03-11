@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blues Burger — Interior Design Concept</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Oswald:wght@200;300;400;500;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,400&family=Bangers&display=swap" rel="stylesheet">
+<style>
+:root{
+  --neon:#ff1a1a;--ng:rgba(255,26,26,0.7);--nd:#8b0000;
+  --neon2:#ff3333;--neon-b:#4fc3f7;--nbg:rgba(79,195,247,0.5);
+  --gold:#c9a84c;--gold2:#e8d5a0;--brass:#b08840;
+  --mahogany:#2a0e06;--mah2:#3e1a0c;--mah3:#501f0e;
+  --bg:#050508;--bg2:#0a0c12;--bg3:#0e1018;
+  --cream:#f2ece0;--cream2:#d4c9b0;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--cream);font-family:'Oswald',sans-serif;overflow-x:hidden}
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.02'/%3E%3C/svg%3E");pointer-events:none;z-index:10000}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:999;padding:18px 50px;background:linear-gradient(180deg,rgba(5,5,8,.98) 60%,transparent);display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,26,26,0.04)}
+.nb{font-family:'Playfair Display',serif;font-weight:900;font-size:.9rem;letter-spacing:6px;text-transform:uppercase;color:var(--neon);text-shadow:0 0 15px var(--ng),0 0 30px rgba(255,26,26,.2)}
+.nl{display:flex;gap:35px}
+.nl a{font-family:'Oswald',sans-serif;font-weight:200;font-size:.6rem;letter-spacing:4px;text-transform:uppercase;color:var(--cream);text-decoration:none;opacity:.3;transition:all .3s}
+.nl a:hover{opacity:1;color:var(--neon)}
+
+/* SCROLL REVEAL */
+.rv{opacity:0;transform:translateY(35px);transition:opacity .9s,transform .9s}.rv.v{opacity:1;transform:translateY(0)}
+.d1{transition-delay:.15s}.d2{transition-delay:.3s}
+
+/* HERO */
+.hero{height:100vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 50%,rgba(255,26,26,.06) 0%,transparent 50%),radial-gradient(ellipse 40% 30% at 80% 30%,rgba(201,168,76,.03) 0%,transparent 50%),var(--bg)}
+
+/* Neon border frame around hero */
+.hero-frame{position:absolute;inset:40px;border:1px solid rgba(255,26,26,.06);pointer-events:none}
+.hero-frame::before{content:'';position:absolute;inset:8px;border:1px solid rgba(255,26,26,.03)}
+/* Corner neon accents */
+.hc{position:absolute;width:30px;height:30px}
+.hc::before,.hc::after{content:'';position:absolute;background:var(--neon);box-shadow:0 0 6px var(--neon),0 0 12px var(--ng);border-radius:1px}
+.hc-tl{top:40px;left:40px}.hc-tl::before{width:30px;height:2px;top:0;left:0}.hc-tl::after{width:2px;height:30px;top:0;left:0}
+.hc-tr{top:40px;right:40px}.hc-tr::before{width:30px;height:2px;top:0;right:0}.hc-tr::after{width:2px;height:30px;top:0;right:0}
+.hc-bl{bottom:40px;left:40px}.hc-bl::before{width:30px;height:2px;bottom:0;left:0}.hc-bl::after{width:2px;height:30px;bottom:0;left:0}
+.hc-br{bottom:40px;right:40px}.hc-br::before{width:30px;height:2px;bottom:0;right:0}.hc-br::after{width:2px;height:30px;bottom:0;right:0}
+
+.hero-content{text-align:center;position:relative;z-index:2}
+.hero h1{font-family:'Playfair Display',serif;font-weight:900;font-size:5rem;letter-spacing:8px;text-transform:uppercase;line-height:1}
+.hero h1 .bl{display:block;color:var(--neon);text-shadow:0 0 10px var(--neon),0 0 25px var(--ng),0 0 50px rgba(255,26,26,.3),0 0 80px rgba(255,26,26,.15);animation:nb 4s ease-in-out infinite alternate}
+.hero h1 .bu{display:block;font-size:2rem;letter-spacing:20px;color:var(--gold2);text-shadow:0 0 8px rgba(201,168,76,.2);margin-top:5px}
+@keyframes nb{0%{text-shadow:0 0 10px var(--neon),0 0 25px var(--ng),0 0 50px rgba(255,26,26,.3),0 0 80px rgba(255,26,26,.15)}100%{text-shadow:0 0 15px var(--neon),0 0 35px var(--ng),0 0 70px rgba(255,26,26,.4),0 0 110px rgba(255,26,26,.2)}}
+
+.hero-line{width:120px;height:1px;background:var(--neon);margin:25px auto;box-shadow:0 0 6px var(--neon),0 0 12px var(--ng);animation:nb 4s ease-in-out infinite alternate}
+.hero-sub{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:1.2rem;color:var(--cream2);opacity:.35;letter-spacing:4px}
+.hero-tag{font-weight:200;font-size:.55rem;letter-spacing:8px;text-transform:uppercase;color:var(--gold);opacity:.2;margin-top:20px}
+
+/* GOLD LINE */
+.gl{height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:.12}
+
+/* SECTIONS */
+.sec{padding:130px 20px;position:relative}
+.sec-bg1{background:var(--bg2)}.sec-bg2{background:var(--bg)}
+.sl{font-weight:200;font-size:.6rem;letter-spacing:10px;text-transform:uppercase;color:var(--gold);opacity:.35;text-align:center;display:block;margin-bottom:12px}
+.sh{font-family:'Playfair Display',serif;font-weight:700;font-size:2.8rem;text-align:center;letter-spacing:2px;margin-bottom:55px;line-height:1.2}
+.sh em{color:var(--neon);text-shadow:0 0 15px rgba(255,26,26,.15);font-style:italic}
+
+/* ROOM */
+.room{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1.2fr;gap:55px;align-items:center}
+.room.flip{grid-template-columns:1.2fr 1fr}.room.flip .rtx{order:2}
+.rtx h3{font-family:'Playfair Display',serif;font-weight:700;font-size:1.8rem;color:var(--cream);letter-spacing:1px;margin-bottom:14px}
+.rtx h3 em{color:var(--neon);text-shadow:0 0 10px rgba(255,26,26,.15);font-style:italic}
+.rtx p{font-family:'Cormorant Garamond',serif;font-size:.92rem;line-height:2.1;opacity:.38;font-style:italic}
+.tags{margin-top:20px;display:flex;flex-wrap:wrap;gap:7px}
+.tag{padding:5px 12px;border:1px solid rgba(201,168,76,.12);font-size:.5rem;letter-spacing:3px;text-transform:uppercase;color:var(--gold);opacity:.4;transition:all .3s;font-family:'Oswald',sans-serif;font-weight:300}
+.tag:hover{border-color:var(--neon);color:var(--neon);opacity:.8}
+
+/* SVG SCENES */
+.scene{width:100%;aspect-ratio:4/3;border:1px solid rgba(255,26,26,.05);overflow:hidden;position:relative;background:var(--bg)}
+
+/* MATERIAL PALETTE */
+.pal{padding:90px 20px;background:var(--bg);text-align:center}
+.pal-grid{max-width:800px;margin:30px auto 0;display:grid;grid-template-columns:repeat(4,1fr);gap:15px}
+.pal-item{aspect-ratio:3/2;border-radius:3px;position:relative;overflow:hidden;transition:all .5s;cursor:default;display:flex;align-items:flex-end;justify-content:center;padding-bottom:10px;border:1px solid rgba(255,255,255,.03)}
+.pal-item:hover{transform:translateY(-6px);box-shadow:0 12px 30px rgba(0,0,0,.5);border-color:rgba(255,26,26,.1)}
+.pal-item span{font-family:'Oswald',sans-serif;font-weight:200;font-size:.5rem;letter-spacing:3px;text-transform:uppercase;opacity:0;transition:opacity .3s;background:rgba(0,0,0,.6);padding:3px 10px;border-radius:1px}
+.pal-item:hover span{opacity:1}
+
+/* CTA */
+.cta{padding:140px 20px;text-align:center;position:relative;background:radial-gradient(ellipse 60% 40% at 50% 50%,rgba(255,26,26,.06) 0%,transparent 60%),var(--bg)}
+.cta h2{font-family:'Playfair Display',serif;font-weight:900;font-size:3.5rem;color:var(--neon);text-shadow:0 0 10px var(--neon),0 0 30px var(--ng),0 0 60px rgba(255,26,26,.25);letter-spacing:4px;text-transform:uppercase;margin-bottom:10px;line-height:1.1}
+.cta p{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:1rem;color:var(--gold2);opacity:.3;margin-bottom:40px;letter-spacing:3px}
+.btns{display:flex;gap:18px;justify-content:center;flex-wrap:wrap}
+.btn{padding:16px 50px;font-family:'Oswald',sans-serif;font-weight:400;font-size:.8rem;letter-spacing:6px;text-transform:uppercase;text-decoration:none;border:1px solid;cursor:pointer;transition:all .4s;position:relative;overflow:hidden}
+.btn::before{content:'';position:absolute;inset:0;transform:scaleX(0);transform-origin:left;transition:transform .4s;z-index:-1}
+.btn:hover::before{transform:scaleX(1)}
+.br{color:var(--neon);border-color:var(--neon);box-shadow:0 0 12px rgba(255,26,26,.08)}.br::before{background:var(--neon)}.br:hover{color:#fff;box-shadow:0 0 35px rgba(255,26,26,.25)}
+.bg{color:var(--gold);border-color:rgba(201,168,76,.2)}.bg::before{background:var(--gold)}.bg:hover{color:var(--bg)}
+
+footer{padding:35px;text-align:center;background:#030305;border-top:1px solid rgba(255,26,26,.04)}
+.fb{font-family:'Playfair Display',serif;font-weight:900;font-size:1rem;letter-spacing:6px;text-transform:uppercase;color:var(--neon);text-shadow:0 0 10px rgba(255,26,26,.2)}
+.fd{font-weight:200;font-size:.5rem;letter-spacing:5px;text-transform:uppercase;opacity:.1;margin-top:10px}
+
+@media(max-width:900px){.room,.room.flip{grid-template-columns:1fr;gap:30px}.room.flip .rtx{order:0}.hero h1 .bl{font-size:3.5rem}.hero h1 .bu{font-size:1.4rem;letter-spacing:12px}.sh{font-size:2.2rem}.cta h2{font-size:2.5rem}.pal-grid{grid-template-columns:repeat(2,1fr)}.nl{display:none}}
+@media(max-width:500px){.hero h1 .bl{font-size:2.5rem}.hero h1 .bu{font-size:1rem;letter-spacing:8px}.hero-frame{inset:15px}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nb">Blues Burger</div>
+  <div class="nl">
+    <a href="#entrance">Entrance</a>
+    <a href="#booths">Booths</a>
+    <a href="#bar">Bar</a>
+    <a href="#stage">Stage</a>
+    <a href="#wall">Guitar Wall</a>
+  </div>
+</nav>
+
+<!-- ======== HERO ======== -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-frame"></div>
+  <div class="hc hc-tl"></div><div class="hc hc-tr"></div><div class="hc hc-bl"></div><div class="hc hc-br"></div>
+
+  <div class="hero-content">
+    <h1><span class="bl">Blues Burger</span><span class="bu">Interior Concept</span></h1>
+    <div class="hero-line"></div>
+    <p class="hero-sub">An American gentleman's diner, reborn in Tel Aviv</p>
+    <p class="hero-tag">Confidential · Investment Materials · 2026</p>
+  </div>
+</section>
+
+<div class="gl"></div>
+
+<!-- ======== 1. STOREFRONT ======== -->
+<section class="sec sec-bg1" id="entrance">
+  <span class="sl rv">Storefront</span>
+  <h2 class="sh rv">The <em>Entrance</em></h2>
+
+  <div class="room rv d1">
+    <div class="rtx">
+      <h3>Red Glow on the <em>Sidewalk</em></h3>
+      <p>The sign is visible from a block away — neon red tubes tracing "BLUES" and "BURGER" on a matte black board, mounted on brass brackets that catch the streetlight. Below it, a hand-forged Route 66 shield in neon blue marks the threshold. The glass double doors are framed in brushed brass. Through them, the warm red interior beckons. An American flag rendered entirely in neon tubes glows beside the entrance — not patriotic kitsch, but a gentleman's nod to the culture that made this food, this music, this feeling.</p>
+      <div class="tags">
+        <span class="tag">Neon Tube Sign</span>
+        <span class="tag">Brass Brackets</span>
+        <span class="tag">Route 66 Shield</span>
+        <span class="tag">Neon Flag Tribute</span>
+        <span class="tag">Brass Door Frames</span>
+        <span class="tag">Sidewalk Red Glow</span>
+      </div>
+    </div>
+    <div class="scene">
+      <svg viewBox="0 0 600 450" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="ng"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <filter id="ng2"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <filter id="ng3"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <filter id="bglow"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <pattern id="bp" width="60" height="30" patternUnits="userSpaceOnUse">
+            <rect width="60" height="30" fill="#2a1810"/>
+            <rect x="0" y="0" width="28" height="13" rx="1" fill="#3a2418" stroke="#1a100a" stroke-width=".5"/>
+            <rect x="31" y="0" width="29" height="13" rx="1" fill="#352218" stroke="#1a100a" stroke-width=".5"/>
+            <rect x="15" y="16" width="28" height="13" rx="1" fill="#382318" stroke="#1a100a" stroke-width=".5"/>
+            <rect x="46" y="16" width="14" height="13" rx="1" fill="#3a2418" stroke="#1a100a" stroke-width=".5"/>
+            <rect x="0" y="16" width="13" height="13" rx="1" fill="#352018" stroke="#1a100a" stroke-width=".5"/>
+          </pattern>
+        </defs>
+
+        <!-- Night sky -->
+        <rect width="600" height="450" fill="#040608"/>
+
+        <!-- Building -->
+        <rect x="50" y="40" width="500" height="350" fill="url(#bp)"/>
+
+        <!-- Sidewalk -->
+        <rect x="0" y="370" width="600" height="80" fill="#0e0e0e"/>
+        <line x1="0" y1="370" x2="600" y2="370" stroke="#1a1a1a" stroke-width="1"/>
+        <!-- Sidewalk cracks -->
+        <line x1="150" y1="370" x2="150" y2="450" stroke="#0a0a0a" stroke-width=".5"/>
+        <line x1="300" y1="370" x2="300" y2="450" stroke="#0a0a0a" stroke-width=".5"/>
+        <line x1="450" y1="370" x2="450" y2="450" stroke="#0a0a0a" stroke-width=".5"/>
+
+        <!-- Red glow pool on sidewalk -->
+        <ellipse cx="300" cy="388" rx="200" ry="25" fill="rgba(255,26,26,0.05)"/>
+        <ellipse cx="300" cy="388" rx="120" ry="15" fill="rgba(255,26,26,0.04)"/>
+
+        <!-- ===== AWNING ===== -->
+        <path d="M65,175 L535,175 L528,195 L72,195 Z" fill="#3a0000"/>
+        <path d="M65,175 L535,175" stroke="#5c0000" stroke-width="1"/>
+        <!-- Awning scallops -->
+        <path d="M72,195 Q90,205 108,195 Q126,205 144,195 Q162,205 180,195 Q198,205 216,195 Q234,205 252,195 Q270,205 288,195 Q306,205 324,195 Q342,205 360,195 Q378,205 396,195 Q414,205 432,195 Q450,205 468,195 Q486,205 504,195 Q522,205 528,195" fill="none" stroke="#5c0000" stroke-width="1.5"/>
+
+        <!-- ===== DOORS ===== -->
+        <!-- Door frame - brass -->
+        <rect x="210" y="195" width="180" height="175" rx="2" fill="#1a1008" stroke="#b08840" stroke-width="2.5"/>
+        <!-- Left door -->
+        <rect x="215" y="200" width="83" height="165" fill="#0c0c10"/>
+        <!-- Right door -->
+        <rect x="302" y="200" width="83" height="165" fill="#0c0c10"/>
+        <!-- Center divider brass -->
+        <rect x="297" y="198" width="6" height="170" fill="#b08840"/>
+        <!-- Door glass panels -->
+        <rect x="222" y="208" width="69" height="90" rx="1" fill="#0a0e16" stroke="#8b6914" stroke-width=".5"/>
+        <rect x="309" y="208" width="69" height="90" rx="1" fill="#0a0e16" stroke="#8b6914" stroke-width=".5"/>
+        <!-- Interior warm glow through glass -->
+        <rect x="222" y="208" width="69" height="90" fill="rgba(255,60,30,0.03)"/>
+        <rect x="309" y="208" width="69" height="90" fill="rgba(255,60,30,0.03)"/>
+        <!-- Brass door handles -->
+        <rect x="289" y="280" width="4" height="30" rx="2" fill="#c9a84c" filter="url(#ng3)"/>
+        <rect x="307" y="280" width="4" height="30" rx="2" fill="#c9a84c" filter="url(#ng3)"/>
+        <!-- Handle plates -->
+        <rect x="286" y="272" width="10" height="45" rx="3" fill="none" stroke="#b08840" stroke-width="1"/>
+        <rect x="304" y="272" width="10" height="45" rx="3" fill="none" stroke="#b08840" stroke-width="1"/>
+        <!-- Kick plates -->
+        <rect x="218" y="340" width="77" height="22" rx="1" fill="#1a1a1a" stroke="#b08840" stroke-width=".5"/>
+        <rect x="305" y="340" width="77" height="22" rx="1" fill="#1a1a1a" stroke="#b08840" stroke-width=".5"/>
+
+        <!-- Transom -->
+        <rect x="212" y="178" width="176" height="16" rx="1" fill="#0a0e16" stroke="#b08840" stroke-width=".5"/>
+
+        <!-- ===== HANGING NEON SIGN ===== -->
+        <!-- Brass mounting arm left -->
+        <rect x="160" y="68" width="60" height="5" rx="2" fill="#b08840"/>
+        <rect x="155" y="62" width="10" height="16" rx="2" fill="#c9a84c" stroke="#b08840" stroke-width=".5"/>
+        <!-- Brass mounting arm right -->
+        <rect x="380" y="68" width="60" height="5" rx="2" fill="#b08840"/>
+        <rect x="435" y="62" width="10" height="16" rx="2" fill="#c9a84c" stroke="#b08840" stroke-width=".5"/>
+        <!-- Chains -->
+        <line x1="205" y1="73" x2="205" y2="88" stroke="#c9a84c" stroke-width="2"/>
+        <line x1="395" y1="73" x2="395" y2="88" stroke="#c9a84c" stroke-width="2"/>
+
+        <!-- Sign board -->
+        <rect x="180" y="86" width="240" height="75" rx="4" fill="#0a0a0f" stroke="#b08840" stroke-width="1.5"/>
+        <rect x="185" y="91" width="230" height="65" rx="2" fill="none" stroke="rgba(176,136,64,0.2)" stroke-width=".5"/>
+
+        <!-- NEON TUBE TEXT — "BLUES" -->
+        <text x="300" y="120" text-anchor="middle" font-family="'Playfair Display',serif" font-weight="900" font-size="30" letter-spacing="6" fill="none" stroke="#ff1a1a" stroke-width="1.5" filter="url(#ng2)">BLUES</text>
+        <text x="300" y="120" text-anchor="middle" font-family="'Playfair Display',serif" font-weight="900" font-size="30" letter-spacing="6" fill="#ff3333" opacity=".95">BLUES</text>
+        <!-- NEON TUBE TEXT — "BURGER" -->
+        <text x="300" y="148" text-anchor="middle" font-family="'Oswald',sans-serif" font-weight="300" font-size="14" letter-spacing="10" fill="none" stroke="#ff1a1a" stroke-width="1" filter="url(#ng)">BURGER</text>
+        <text x="300" y="148" text-anchor="middle" font-family="'Oswald',sans-serif" font-weight="300" font-size="14" letter-spacing="10" fill="#ff3333" opacity=".85">BURGER</text>
+
+        <!-- Sign glow halo -->
+        <ellipse cx="300" cy="122" rx="140" ry="55" fill="rgba(255,26,26,0.03)">
+          <animate attributeName="opacity" values="1;.5;1" dur="4s" repeatCount="indefinite"/>
+        </ellipse>
+
+        <!-- ===== NEON AMERICAN FLAG ===== -->
+        <g transform="translate(88,80)">
+          <!-- Stripes in neon -->
+          <line x1="0" y1="0" x2="55" y2="0" stroke="#ff1a1a" stroke-width="1.5" filter="url(#ng3)" opacity=".7"/>
+          <line x1="0" y1="6" x2="55" y2="6" stroke="#ff1a1a" stroke-width="1.5" filter="url(#ng3)" opacity=".5"/>
+          <line x1="0" y1="12" x2="55" y2="12" stroke="#ff1a1a" stroke-width="1.5" filter="url(#ng3)" opacity=".7"/>
+          <line x1="0" y1="18" x2="55" y2="18" stroke="#ff1a1a" stroke-width="1.5" filter="url(#ng3)" opacity=".5"/>
+          <line x1="0" y1="24" x2="55" y2="24" stroke="#ff1a1a" stroke-width="1.5" filter="url(#ng3)" opacity=".7"/>
+          <line x1="0" y1="30" x2="55" y2="30" stroke="#ff1a1a" stroke-width="1.5" filter="url(#ng3)" opacity=".5"/>
+          <line x1="0" y1="36" x2="55" y2="36" stroke="#ff1a1a" stroke-width="1.5" filter="url(#ng3)" opacity=".7"/>
+          <!-- Blue canton -->
+          <rect x="0" y="0" width="22" height="18" fill="none" stroke="#4fc3f7" stroke-width="1.5" filter="url(#ng3)" opacity=".5"/>
+          <!-- Stars hint -->
+          <circle cx="6" cy="5" r="1" fill="#4fc3f7" opacity=".6" filter="url(#ng3)"/>
+          <circle cx="12" cy="5" r="1" fill="#4fc3f7" opacity=".6" filter="url(#ng3)"/>
+          <circle cx="18" cy="5" r="1" fill="#4fc3f7" opacity=".6" filter="url(#ng3)"/>
+          <circle cx="9" cy="10" r="1" fill="#4fc3f7" opacity=".6" filter="url(#ng3)"/>
+          <circle cx="15" cy="10" r="1" fill="#4fc3f7" opacity=".6" filter="url(#ng3)"/>
+          <circle cx="6" cy="15" r="1" fill="#4fc3f7" opacity=".6" filter="url(#ng3)"/>
+          <circle cx="12" cy="15" r="1" fill="#4fc3f7" opacity=".6" filter="url(#ng3)"/>
+          <circle cx="18" cy="15" r="1" fill="#4fc3f7" opacity=".6" filter="url(#ng3)"/>
+          <!-- Flag glow -->
+          <ellipse cx="27" cy="18" rx="35" ry="25" fill="rgba(255,26,26,0.02)"/>
+        </g>
+
+        <!-- ===== ROUTE 66 SHIELD — neon blue ===== -->
+        <g transform="translate(465,210)">
+          <path d="M0,10 L10,0 L55,0 L65,10 L60,52 L32,68 L5,52 Z" fill="none" stroke="#4fc3f7" stroke-width="2" filter="url(#bglow)"/>
+          <path d="M5,13 L13,5 L52,5 L60,13 L56,49 L32,63 L9,49 Z" fill="none" stroke="rgba(79,195,247,0.3)" stroke-width="1"/>
+          <text x="32" y="23" text-anchor="middle" font-family="'Oswald',sans-serif" font-size="8" font-weight="500" fill="#4fc3f7" filter="url(#ng3)">ROUTE</text>
+          <text x="32" y="46" text-anchor="middle" font-family="'Playfair Display',serif" font-weight="900" font-size="20" fill="#4fc3f7" filter="url(#bglow)">66</text>
+          <text x="32" y="59" text-anchor="middle" font-family="'Oswald',sans-serif" font-size="6" font-weight="200" letter-spacing="2" fill="#4fc3f7" opacity=".7">TLV</text>
+          <!-- Blue glow -->
+          <ellipse cx="32" cy="34" rx="45" ry="40" fill="rgba(79,195,247,0.02)"/>
+        </g>
+
+        <!-- ===== NEON OPEN sign ===== -->
+        <g transform="translate(90,250)">
+          <rect x="0" y="0" width="80" height="38" rx="3" fill="#0a0a0f" stroke="#b08840" stroke-width="1"/>
+          <text x="40" y="26" text-anchor="middle" font-family="'Playfair Display',serif" font-weight="700" font-size="18" fill="none" stroke="#ff1a1a" stroke-width="1.2" filter="url(#ng)">OPEN</text>
+          <text x="40" y="26" text-anchor="middle" font-family="'Playfair Display',serif" font-weight="700" font-size="18" fill="#ff3333" opacity=".9">OPEN</text>
+          <rect x="0" y="0" width="80" height="38" rx="3" fill="rgba(255,26,26,0.02)">
+            <animate attributeName="opacity" values="1;.3;1;1;.5;1" dur="6s" repeatCount="indefinite"/>
+          </rect>
+        </g>
+
+        <!-- ===== WINDOWS ===== -->
+        <rect x="75" y="200" width="115" height="140" rx="2" fill="#0a0e16" stroke="#b08840" stroke-width="1"/>
+        <rect x="410" y="200" width="115" height="140" rx="2" fill="#0a0e16" stroke="#b08840" stroke-width="1"/>
+        <!-- Mullions -->
+        <line x1="132" y1="200" x2="132" y2="340" stroke="#b08840" stroke-width=".5"/>
+        <line x1="467" y1="200" x2="467" y2="340" stroke="#b08840" stroke-width=".5"/>
+        <!-- Interior glow -->
+        <rect x="75" y="200" width="115" height="140" fill="rgba(255,50,30,0.025)"/>
+        <rect x="410" y="200" width="115" height="140" fill="rgba(255,50,30,0.025)"/>
+
+        <!-- ===== BRASS WALL SCONCES ===== -->
+        <g transform="translate(192,225)">
+          <rect x="0" y="0" width="8" height="15" rx="2" fill="#b08840"/>
+          <ellipse cx="4" cy="-3" rx="8" ry="4" fill="rgba(255,180,100,0.08)"/>
+          <circle cx="4" cy="2" r="2" fill="#ffcc66" opacity=".3" filter="url(#ng3)"/>
+        </g>
+        <g transform="translate(400,225)">
+          <rect x="0" y="0" width="8" height="15" rx="2" fill="#b08840"/>
+          <ellipse cx="4" cy="-3" rx="8" ry="4" fill="rgba(255,180,100,0.08)"/>
+          <circle cx="4" cy="2" r="2" fill="#ffcc66" opacity=".3" filter="url(#ng3)"/>
+        </g>
+
+        <!-- ===== NEON TRIM along building top ===== -->
+        <line x1="55" y1="45" x2="545" y2="45" stroke="#ff1a1a" stroke-width="1" filter="url(#ng3)" opacity=".25"/>
+
+        <!-- ===== CADILLAC SILHOUETTE parked out front ===== -->
+        <g transform="translate(30,385)" opacity=".12">
+          <!-- Simple elegant car silhouette -->
+          <path d="M0,25 L10,25 L15,15 L30,8 L80,5 L110,5 L140,8 L155,18 L160,25 L170,25" fill="none" stroke="var(--cream)" stroke-width="1.5"/>
+          <!-- Wheels -->
+          <circle cx="40" cy="25" r="8" fill="none" stroke="var(--cream)" stroke-width="1"/>
+          <circle cx="135" cy="25" r="8" fill="none" stroke="var(--cream)" stroke-width="1"/>
+          <!-- Tail fin hint -->
+          <line x1="155" y1="18" x2="165" y2="12" stroke="var(--cream)" stroke-width="1"/>
+        </g>
+
+        <!-- Neon frame accent around whole storefront -->
+        <rect x="55" y="45" width="490" height="322" rx="3" fill="none" stroke="rgba(255,26,26,0.04)" stroke-width="1"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<div class="gl"></div>
+
+<!-- ======== 2. GENTLEMAN'S BOOTH ======== -->
+<section class="sec sec-bg2" id="booths">
+  <span class="sl rv">Seating</span>
+  <h2 class="sh rv">The <em>Gentleman's Booth</em></h2>
+
+  <div class="room flip rv d1">
+    <div class="rtx">
+      <h3>Oxblood & <em>Brass</em></h3>
+      <p>These aren't diner booths — they're thrones. Deep-tufted oxblood leather with diamond-pattern stitching, brass-capped armrests, and walnut partition walls that rise high enough to give every party privacy. The tables are solid mahogany with brass edge inlay. Above each booth, a brass pendant light hangs from a fabric cord, casting a warm pool that makes the leather glow. Between booths, the exposed brick wall holds black-and-white photographs of B.B. King, Muddy Waters, and the Chicago blues scene — framed in matte black with brass nameplates. A single neon tube traces a horizontal line along the brick, casting the entire wall in deep red.</p>
+      <div class="tags">
+        <span class="tag">Diamond Tufted Leather</span>
+        <span class="tag">Brass-Capped Armrests</span>
+        <span class="tag">Mahogany Tables</span>
+        <span class="tag">Brass Edge Inlay</span>
+        <span class="tag">Fabric Cord Pendants</span>
+        <span class="tag">Neon Wall Trace</span>
+      </div>
+    </div>
+    <div class="scene">
+      <svg viewBox="0 0 600 450" xmlns="http://www.w3.org/2000/svg">
+        <!-- Brick wall -->
+        <rect width="600" height="450" fill="url(#bp)"/>
+
+        <!-- ===== NEON HORIZONTAL TUBE along wall ===== -->
+        <line x1="20" y1="110" x2="580" y2="110" stroke="#ff1a1a" stroke-width="2" filter="url(#ng)" opacity=".6"/>
+        <line x1="20" y1="110" x2="580" y2="110" stroke="rgba(255,26,26,0.15)" stroke-width="8" filter="url(#ng2)"/>
+        <!-- Neon glow cast on brick -->
+        <rect x="0" y="95" width="600" height="40" fill="rgba(255,26,26,0.015)"/>
+
+        <!-- ===== CHECKERED FLOOR ===== -->
+        <g>
+          <defs><pattern id="ck" width="28" height="28" patternUnits="userSpaceOnUse"><rect width="28" height="28" fill="#1a1a1a"/><rect width="14" height="14" fill="#252525"/><rect x="14" y="14" width="14" height="14" fill="#252525"/></pattern></defs>
+          <polygon points="0,330 600,330 650,450 -50,450" fill="url(#ck)"/>
+          <polygon points="0,330 600,330 650,450 -50,450" fill="rgba(0,0,0,0.25)"/>
+        </g>
+
+        <!-- ===== LEFT BOOTH ===== -->
+        <!-- Partition wall -->
+        <rect x="15" y="130" width="12" height="200" rx="2" fill="#2a0e06" stroke="#3e1a0c" stroke-width="1"/>
+        <!-- Back cushion -->
+        <rect x="28" y="145" width="50" height="180" rx="6" fill="#6b1a00" stroke="#8b2800" stroke-width=".5"/>
+        <!-- Diamond tufting pattern -->
+        <g stroke="#4a1200" stroke-width=".4" fill="none" opacity=".6">
+          <line x1="33" y1="165" x2="53" y2="185"/><line x1="73" y1="165" x2="53" y2="185"/>
+          <line x1="33" y1="205" x2="53" y2="225"/><line x1="73" y1="205" x2="53" y2="225"/>
+          <line x1="33" y1="245" x2="53" y2="265"/><line x1="73" y1="245" x2="53" y2="265"/>
+          <line x1="33" y1="285" x2="53" y2="305"/><line x1="73" y1="285" x2="53" y2="305"/>
+          <line x1="53" y1="185" x2="53" y2="185"/>
+        </g>
+        <!-- Tufting buttons -->
+        <circle cx="53" cy="175" r="2.5" fill="#3a0e00" stroke="#501800" stroke-width=".5"/>
+        <circle cx="53" cy="215" r="2.5" fill="#3a0e00" stroke="#501800" stroke-width=".5"/>
+        <circle cx="53" cy="255" r="2.5" fill="#3a0e00" stroke="#501800" stroke-width=".5"/>
+        <circle cx="53" cy="295" r="2.5" fill="#3a0e00" stroke="#501800" stroke-width=".5"/>
+        <!-- Seat -->
+        <rect x="78" y="290" width="100" height="38" rx="5" fill="#6b1a00"/>
+        <line x1="83" y1="308" x2="173" y2="308" stroke="#4a1200" stroke-width=".4" opacity=".5"/>
+        <!-- Brass armrest cap -->
+        <rect x="78" y="286" width="100" height="4" rx="1" fill="#b08840" opacity=".6"/>
+        <!-- Chrome trim -->
+        <line x1="28" y1="328" x2="178" y2="328" stroke="#b08840" stroke-width="1.5" opacity=".5"/>
+
+        <!-- ===== TABLE ===== -->
+        <rect x="190" y="270" width="120" height="10" rx="2" fill="#2a0e06" stroke="#b08840" stroke-width=".5"/>
+        <!-- Brass edge inlay -->
+        <line x1="190" y1="270" x2="310" y2="270" stroke="#b08840" stroke-width="1" opacity=".4"/>
+        <line x1="190" y1="280" x2="310" y2="280" stroke="#b08840" stroke-width=".5" opacity=".3"/>
+        <!-- Table pedestal -->
+        <rect x="244" y="280" width="12" height="48" rx="2" fill="#b08840" opacity=".4"/>
+        <ellipse cx="250" cy="330" rx="30" ry="5" fill="#b08840" opacity=".2"/>
+
+        <!-- ===== RIGHT BOOTH ===== -->
+        <rect x="575" y="130" width="12" height="200" rx="2" fill="#2a0e06" stroke="#3e1a0c" stroke-width="1"/>
+        <rect x="522" y="145" width="50" height="180" rx="6" fill="#6b1a00" stroke="#8b2800" stroke-width=".5"/>
+        <circle cx="547" cy="175" r="2.5" fill="#3a0e00" stroke="#501800" stroke-width=".5"/>
+        <circle cx="547" cy="215" r="2.5" fill="#3a0e00" stroke="#501800" stroke-width=".5"/>
+        <circle cx="547" cy="255" r="2.5" fill="#3a0e00" stroke="#501800" stroke-width=".5"/>
+        <circle cx="547" cy="295" r="2.5" fill="#3a0e00" stroke="#501800" stroke-width=".5"/>
+        <rect x="422" y="290" width="100" height="38" rx="5" fill="#6b1a00"/>
+        <rect x="422" y="286" width="100" height="4" rx="1" fill="#b08840" opacity=".6"/>
+        <line x1="422" y1="328" x2="572" y2="328" stroke="#b08840" stroke-width="1.5" opacity=".5"/>
+
+        <!-- Second table -->
+        <rect x="340" y="270" width="70" height="10" rx="2" fill="#2a0e06" stroke="#b08840" stroke-width=".5"/>
+        <rect x="371" y="280" width="8" height="48" rx="2" fill="#b08840" opacity=".3"/>
+
+        <!-- ===== PENDANT LIGHTS ===== -->
+        <g>
+          <!-- Left pendant -->
+          <line x1="250" y1="0" x2="250" y2="115" stroke="#3a2a18" stroke-width="1.5"/>
+          <path d="M238,115 L262,115 L258,135 L242,135 Z" fill="#b08840" stroke="#c9a84c" stroke-width=".5"/>
+          <circle cx="250" cy="122" r="3.5" fill="#ffcc66" opacity=".5" filter="url(#ng3)"/>
+          <ellipse cx="250" cy="140" rx="25" ry="10" fill="rgba(255,200,120,0.04)"/>
+          <ellipse cx="250" cy="230" rx="60" ry="80" fill="rgba(255,180,100,0.012)"/>
+
+          <!-- Right pendant -->
+          <line x1="375" y1="0" x2="375" y2="115" stroke="#3a2a18" stroke-width="1.5"/>
+          <path d="M363,115 L387,115 L383,135 L367,135 Z" fill="#b08840" stroke="#c9a84c" stroke-width=".5"/>
+          <circle cx="375" cy="122" r="3.5" fill="#ffcc66" opacity=".5" filter="url(#ng3)"/>
+          <ellipse cx="375" cy="140" rx="25" ry="10" fill="rgba(255,200,120,0.04)"/>
+        </g>
+
+        <!-- ===== B&W PHOTO FRAMES ===== -->
+        <rect x="120" y="125" width="45" height="55" rx="1" fill="#0a0a0a" stroke="#222" stroke-width="1.5"/>
+        <rect x="124" y="129" width="37" height="47" fill="#151515"/>
+        <!-- Brass nameplate -->
+        <rect x="128" y="183" width="29" height="6" rx="1" fill="#b08840" opacity=".3"/>
+
+        <rect x="430" y="125" width="45" height="55" rx="1" fill="#0a0a0a" stroke="#222" stroke-width="1.5"/>
+        <rect x="434" y="129" width="37" height="47" fill="#151515"/>
+        <rect x="438" y="183" width="29" height="6" rx="1" fill="#b08840" opacity=".3"/>
+
+        <!-- Small frame -->
+        <rect x="280" y="130" width="35" height="28" rx="1" fill="none" stroke="#222" stroke-width="1"/>
+        <rect x="284" y="134" width="27" height="20" fill="#111"/>
+
+        <!-- Tabletop items -->
+        <rect x="210" y="258" width="8" height="14" rx="2" fill="#5c0000" opacity=".5"/>
+        <rect x="225" y="260" width="6" height="12" rx="2" fill="#333" opacity=".4"/>
+        <ellipse cx="245" cy="265" rx="8" ry="6" fill="none" stroke="#b08840" stroke-width=".3" opacity=".3"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<div class="gl"></div>
+
+<!-- ======== MATERIALS ======== -->
+<section class="pal">
+  <span class="sl rv">Materials</span>
+  <h2 class="sh rv" style="margin-bottom:20px">The <em>Palette</em></h2>
+  <div class="pal-grid rv d1">
+    <div class="pal-item" style="background:linear-gradient(135deg,#8b2800,#4a1200)"><span>Oxblood Leather</span></div>
+    <div class="pal-item" style="background:linear-gradient(135deg,#c9a84c,#8b6914)"><span>Brushed Brass</span></div>
+    <div class="pal-item" style="background:linear-gradient(135deg,#3e1a0c,#1e0f06)"><span>Dark Mahogany</span></div>
+    <div class="pal-item" style="background:linear-gradient(135deg,#4d3020,#2a1810)"><span>Exposed Brick</span></div>
+    <div class="pal-item" style="background:linear-gradient(135deg,#cc0000,#ff1a1a);box-shadow:inset 0 0 15px rgba(255,26,26,.2)"><span>Neon Red Tube</span></div>
+    <div class="pal-item" style="background-image:repeating-conic-gradient(#1a1a1a 0% 25%,#252525 0% 50%);background-size:14px 14px"><span>Checkered Tile</span></div>
+    <div class="pal-item" style="background:linear-gradient(135deg,#b0b0b0,#666)"><span>Polished Chrome</span></div>
+    <div class="pal-item" style="background:linear-gradient(135deg,#1a2a5c,#4fc3f7);box-shadow:inset 0 0 12px rgba(79,195,247,.15)"><span>Neon Blue Accent</span></div>
+  </div>
+</section>
+
+<div class="gl"></div>
+
+<!-- ======== CTA ======== -->
+<section class="cta">
+  <h2 class="rv">Build the<br>Blues With Us</h2>
+  <p class="rv d1">Old North, Tel Aviv — Opening 2026</p>
+  <div class="btns rv d2">
+    <a class="btn br" href="#">Invest Now</a>
+    <a class="btn bg" href="#">Request Deck</a>
+  </div>
+</section>
+
+<footer>
+  <div class="fb">Blues Burger</div>
+  <div class="fd">Interior Design Concept · Confidential · 2026</div>
+</footer>
+
+<script>
+const o=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('v')})},{threshold:.1,rootMargin:'0px 0px -30px 0px'});
+document.querySelectorAll('.rv').forEach(el=>o.observe(el));
+</script>
+</body>
+</html>
